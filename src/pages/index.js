@@ -78,7 +78,13 @@ export default function Home() {
               />
             </div>
 
-            <Image src="/hero.png" alt="Prelto" width={960} height={552} />
+            <Image
+              src="/hero.png"
+              alt="Prelto"
+              width={960}
+              height={552}
+              loading="eager"
+            />
           </section>
 
           <Section
@@ -218,6 +224,7 @@ function Section({
         alt={ImageAlt}
         width={ImageWidth}
         height={ImageHeight}
+        loading="eager"
       />
     </section>
   );
