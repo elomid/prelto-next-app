@@ -1,88 +1,48 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:us-west-2:303341146679:task-definition/prelto-next-app-task-def:14",
-    "containerDefinitions": [
+  "containerDefinitions": [
+    {
+      "name": "prelto-next-app",
+      "image": "303341146679.dkr.ecr.us-west-2.amazonaws.com/prelto-next-app:latest",
+      "cpu": 0,
+      "portMappings": [
         {
-            "name": "prelto-next-app",
-            "image": "303341146679.dkr.ecr.us-west-2.amazonaws.com/prelto-next-app:latest",
-            "cpu": 0,
-            "portMappings": [
-                {
-                    "containerPort": 3000,
-                    "hostPort": 3000,
-                    "protocol": "tcp",
-                    "name": "80",
-                    "appProtocol": "http"
-                }
-            ],
-            "essential": true,
-            "environment": [],
-            "environmentFiles": [],
-            "mountPoints": [],
-            "volumesFrom": [],
-            "ulimits": [],
-            "logConfiguration": {
-                "logDriver": "awslogs",
-                "options": {
-                    "awslogs-create-group": "true",
-                    "awslogs-group": "/ecs/prelto-next-app-task-def",
-                    "awslogs-region": "us-west-2",
-                    "awslogs-stream-prefix": "ecs"
-                },
-                "secretOptions": []
-            },
-            "systemControls": []
+          "containerPort": 3000,
+          "hostPort": 3000,
+          "protocol": "tcp",
+          "name": "80",
+          "appProtocol": "http"
         }
-    ],
-    "family": "prelto-next-app-task-def",
-    "taskRoleArn": "arn:aws:iam::303341146679:role/ecsTaskExecutionRole",
-    "executionRoleArn": "arn:aws:iam::303341146679:role/ecsTaskExecutionRole",
-    "networkMode": "awsvpc",
-    "revision": 14,
-    "volumes": [],
-    "status": "ACTIVE",
-    "requiresAttributes": [
-        {
-            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+      ],
+      "essential": true,
+      "environment": [],
+      "environmentFiles": [],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "ulimits": [],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-create-group": "true",
+          "awslogs-group": "/ecs/prelto-next-app-task-def",
+          "awslogs-region": "us-west-2",
+          "awslogs-stream-prefix": "ecs"
         },
-        {
-            "name": "ecs.capability.execution-role-awslogs"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.ecr-auth"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.task-iam-role"
-        },
-        {
-            "name": "ecs.capability.execution-role-ecr-pull"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
-        },
-        {
-            "name": "ecs.capability.task-eni"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
-        }
-    ],
-    "placementConstraints": [],
-    "compatibilities": [
-        "EC2",
-        "FARGATE"
-    ],
-    "runtimePlatform": {
-        "cpuArchitecture": "X86_64",
-        "operatingSystemFamily": "LINUX"
-    },
-    "requiresCompatibilities": [
-        "FARGATE"
-    ],
-    "cpu": "1024",
-    "memory": "2048",
-    "registeredAt": "2024-06-01T11:28:51.773000-07:00",
-    "registeredBy": "arn:aws:iam::303341146679:user/omid"
+        "secretOptions": []
+      },
+      "systemControls": []
+    }
+  ],
+  "family": "prelto-next-app-task-def",
+  "taskRoleArn": "arn:aws:iam::303341146679:role/ecsTaskExecutionRole",
+  "executionRoleArn": "arn:aws:iam::303341146679:role/ecsTaskExecutionRole",
+  "networkMode": "awsvpc",
+  "volumes": [],
+  "placementConstraints": [],
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "2048"
 }
