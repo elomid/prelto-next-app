@@ -45,7 +45,6 @@ const LoginPage = () => {
         <CardHeader>
           <CardTitle>Login</CardTitle>
           <CardDescription>Access your account</CardDescription>
-          <p>?: {process.env.NEXT_PUBLIC_BACKEND_URL}</p>
         </CardHeader>
         <CardContent>
           <div className="grid w-full items-center gap-4">
