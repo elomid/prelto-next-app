@@ -11,7 +11,7 @@ env:
   ECS_SERVICE: prelto-next-app-service
   ECS_CLUSTER: prelto-dev-cluster
   ECS_TASK_DEFINITION: prelto-next-app-task-def
-  CONTAINER_NAME: prelto-next-app-container
+  CONTAINER_NAME: prelto-next-app
 
 jobs:
   deploy:
