@@ -30,7 +30,7 @@ export default function Home() {
   };
 
   return (
-    <>
+    <div className="h-full w-full bg-[#fefeff]">
       <main
         className={`${inter.className} antialiased max-w-[960px] mx-auto selection:bg-[#70F4EC] px-4`}
       >
@@ -135,7 +135,7 @@ export default function Home() {
           <p>Prelto © 2024</p>
         </div>
       </footer>
-    </>
+    </div>
   );
 }
 
