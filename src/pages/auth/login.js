@@ -47,8 +47,6 @@ const LoginPage = () => {
           <CardDescription>Access your account</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="font-medium">{process.env.NEXT_PUBLIC_BACKEND_URL}:</p>
-          <pre>{process.env.NEXT_PUBLIC_BACKEND_URL}</pre>
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="email">Email</Label>
