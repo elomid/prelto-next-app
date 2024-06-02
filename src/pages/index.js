@@ -245,7 +245,7 @@ function Section({
 }) {
   return (
     <section className="flex flex-col gap-12">
-      <div className="flex flex-col gap-2 max-w-[670px] mx-auto w-[960px]">
+      <div className="flex flex-col gap-2 max-w-[670px] mx-auto">
         <h1
           className={`${nanumMyeongjo.className} text-[28px] font-extrabold tracking-[-0.2px] sm:text-[18px] md:text-[28px]`}
         >
