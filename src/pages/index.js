@@ -12,22 +12,52 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Textarea } from "@/components/ui/textarea";
+import { IconCheckFilled } from "@/components/icon";
 
 const inter = Inter({ subsets: ["latin"] });
 const nanumMyeongjo = Nanum_Myeongjo({ subsets: ["latin"], weight: "800" });
 const aclonica = Aclonica({ subsets: ["latin"], weight: "400" });
 
 export default function Home() {
-  const [open, setOpen] = useState(false);
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+  const [openDialogId, setOpenDialogId] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  async function handleSubmit(e, email, name, message) {
     e.preventDefault();
-    // TODO: Add actual endpoint for early access submission
-    setSubmitted(true);
-  };
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/request-access`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, name, message }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.error);
+      } else {
+        setSubmitted(true);
+        setOpenDialogId(null);
+      }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  function handleDialogOpenChange(id, open) {
+    setOpenDialogId(open ? id : null);
+  }
 
   return (
     <div className="h-full w-full bg-[#fefeff]">
@@ -65,17 +95,18 @@ export default function Home() {
                 </p>
               </div>
 
-              <RequestAccessDialog
-                open={open}
-                setOpen={setOpen}
-                email={email}
-                setEmail={setEmail}
-                submitted={submitted}
-                setSubmitted={setSubmitted}
-                message={message}
-                setMessage={setMessage}
-                handleSubmit={handleSubmit}
-              />
+              {submitted ? (
+                <SubmittedMessage />
+              ) : (
+                <RequestAccessDialog
+                  id="dialog-1"
+                  open={openDialogId === "dialog-1"}
+                  onOpenChange={handleDialogOpenChange}
+                  onSubmit={handleSubmit}
+                  submitted={submitted}
+                  isSubmitting={isSubmitting}
+                />
+              )}
             </div>
 
             <Image
@@ -83,7 +114,7 @@ export default function Home() {
               alt="Prelto"
               width={960}
               height={552}
-              loading="eager"
+              priority={true}
             />
           </section>
 
@@ -116,17 +147,18 @@ export default function Home() {
 
           <section className="cta-container flex justify-between items-center p-8 border rounded-3xl">
             <p className="font-medium">Get started with Prelto</p>
-            <RequestAccessDialog
-              open={open}
-              setOpen={setOpen}
-              email={email}
-              setEmail={setEmail}
-              submitted={submitted}
-              setSubmitted={setSubmitted}
-              message={message}
-              setMessage={setMessage}
-              handleSubmit={handleSubmit}
-            />
+            {submitted ? (
+              <SubmittedMessage />
+            ) : (
+              <RequestAccessDialog
+                id="dialog-1"
+                open={openDialogId === "dialog-1"}
+                onOpenChange={handleDialogOpenChange}
+                onSubmit={handleSubmit}
+                submitted={submitted}
+                isSubmitting={isSubmitting}
+              />
+            )}
           </section>
         </div>
       </main>
@@ -140,61 +172,68 @@ export default function Home() {
 }
 
 function RequestAccessDialog({
+  id,
   open,
-  setOpen,
-  email,
-  setEmail,
+  onOpenChange,
   submitted,
-  setSubmitted,
-  message,
-  setMessage,
-  handleSubmit,
+  isSubmitting,
+  onSubmit,
 }) {
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [name, setName] = useState("");
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(open) => onOpenChange(id, open)}>
       <DialogTrigger asChild>
-        <Button variant="black">Request Early Access</Button>
+        <Button variant="black">Request early access</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Request Early Access</DialogTitle>
+          <DialogTitle>Request early access</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="email" className="text-right">
-              Email
-            </Label>
+        <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="email">Name</Label>
+            <Input
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="col-span-3"
+              disabled={isSubmitting}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="col-span-3"
-              disabled={submitted}
+              disabled={isSubmitting}
+              required={true}
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="message" className="text-right">
-              What excited you about Prelto?
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="message">
+              What kid of insights are you hoping to discover?
             </Label>
-            <Input
+            <Textarea
               id="message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               className="col-span-3"
-              disabled={submitted}
+              disabled={isSubmitting}
             />
           </div>
-          <div className="text-right">
-            {submitted ? (
-              <Button type="submit" disabled>
-                Check your email
-              </Button>
-            ) : (
-              <Button type="submit" onClick={handleSubmit}>
-                Submit
-              </Button>
-            )}
-          </div>
+
+          <Button
+            type="submit"
+            onClick={(e) => onSubmit(e, email, name, message)}
+            disabled={isSubmitting}
+          >
+            Submit request
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
@@ -224,8 +263,15 @@ function Section({
         alt={ImageAlt}
         width={ImageWidth}
         height={ImageHeight}
-        loading="eager"
       />
     </section>
+  );
+}
+
+function SubmittedMessage() {
+  return (
+    <p className="text-sm rounded-full bg-[#EFF1F1] px-4 py-2 font-medium flex items-center gap-2">
+      Request submitted. We’ll reach out shortly. <IconCheckFilled />
+    </p>
   );
 }
