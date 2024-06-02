@@ -12,22 +12,21 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Textarea } from "@/components/ui/textarea";
 
 const inter = Inter({ subsets: ["latin"] });
 const nanumMyeongjo = Nanum_Myeongjo({ subsets: ["latin"], weight: "800" });
 const aclonica = Aclonica({ subsets: ["latin"], weight: "400" });
 
 export default function Home() {
-  const [open, setOpen] = useState(false);
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [openDialogId, setOpenDialogId] = useState(null);
+  // function handleDialogOpenChange(id) {
+  //   setOpenDialogId(id);
+  // }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // TODO: Add actual endpoint for early access submission
-    setSubmitted(true);
-  };
+  function handleDialogOpenChange(id, open) {
+    setOpenDialogId(open ? id : null);
+  }
 
   return (
     <div className="h-full w-full bg-[#fefeff]">
@@ -66,25 +65,13 @@ export default function Home() {
               </div>
 
               <RequestAccessDialog
-                open={open}
-                setOpen={setOpen}
-                email={email}
-                setEmail={setEmail}
-                submitted={submitted}
-                setSubmitted={setSubmitted}
-                message={message}
-                setMessage={setMessage}
-                handleSubmit={handleSubmit}
+                id="dialog-1"
+                open={openDialogId === "dialog-1"}
+                onOpenChange={handleDialogOpenChange}
               />
             </div>
 
-            <Image
-              src="/hero.png"
-              alt="Prelto"
-              width={960}
-              height={552}
-              loading="eager"
-            />
+            <Image src="/hero.png" alt="Prelto" width={960} height={552} />
           </section>
 
           <Section
@@ -117,15 +104,9 @@ export default function Home() {
           <section className="cta-container flex justify-between items-center p-8 border rounded-3xl">
             <p className="font-medium">Get started with Prelto</p>
             <RequestAccessDialog
-              open={open}
-              setOpen={setOpen}
-              email={email}
-              setEmail={setEmail}
-              submitted={submitted}
-              setSubmitted={setSubmitted}
-              message={message}
-              setMessage={setMessage}
-              handleSubmit={handleSubmit}
+              id="dialog-2"
+              open={openDialogId === "dialog-2"}
+              onOpenChange={handleDialogOpenChange}
             />
           </section>
         </div>
@@ -139,62 +120,70 @@ export default function Home() {
   );
 }
 
-function RequestAccessDialog({
-  open,
-  setOpen,
-  email,
-  setEmail,
-  submitted,
-  setSubmitted,
-  message,
-  setMessage,
-  handleSubmit,
-}) {
+function RequestAccessDialog({ id, open, onOpenChange }) {
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [name, setName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e) => {
+    setIsLoading(true);
+    e.preventDefault();
+    // TODO: Add actual endpoint for early access submission
+    setSubmitted(true);
+    setIsLoading(false);
+  };
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(open) => onOpenChange(id, open)}>
       <DialogTrigger asChild>
-        <Button variant="black">Request Early Access</Button>
+        {submitted ? (
+          <div>Request submitted</div>
+        ) : (
+          <Button variant="black">Request early access</Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Request Early Access</DialogTitle>
+          <DialogTitle>Request early access</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="email" className="text-right">
-              Email
-            </Label>
+        <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="email">Name</Label>
+            <Input
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="col-span-3"
+              disabled={isLoading}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="col-span-3"
-              disabled={submitted}
+              disabled={isLoading}
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="message" className="text-right">
-              What excited you about Prelto?
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="message">
+              What kid of insights are you hoping to discover?
             </Label>
-            <Input
+            <Textarea
               id="message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               className="col-span-3"
-              disabled={submitted}
+              disabled={isLoading}
             />
           </div>
-          <div className="text-right">
-            {submitted ? (
-              <Button type="submit" disabled>
-                Check your email
-              </Button>
-            ) : (
-              <Button type="submit" onClick={handleSubmit}>
-                Submit
-              </Button>
-            )}
-          </div>
+
+          <Button type="submit" onClick={handleSubmit}>
+            Submit request
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
@@ -224,7 +213,6 @@ function Section({
         alt={ImageAlt}
         width={ImageWidth}
         height={ImageHeight}
-        loading="eager"
       />
     </section>
   );
