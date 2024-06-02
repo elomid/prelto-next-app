@@ -151,8 +151,8 @@ export default function Home() {
               <SubmittedMessage />
             ) : (
               <RequestAccessDialog
-                id="dialog-1"
-                open={openDialogId === "dialog-1"}
+                id="dialog-2"
+                open={openDialogId === "dialog-2"}
                 onOpenChange={handleDialogOpenChange}
                 onSubmit={handleSubmit}
                 submitted={submitted}
@@ -216,7 +216,7 @@ function RequestAccessDialog({
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="message">
-              What kid of insights are you hoping to discover?
+              What kind of insights are you most interested in?
             </Label>
             <Textarea
               id="message"
