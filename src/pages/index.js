@@ -13,11 +13,10 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
-import { IconCheckFilled } from "@/components/icon";
+import { IconCheckFilled, IconLogoWithName } from "@/components/icon";
 
 const inter = Inter({ subsets: ["latin"] });
 const nanumMyeongjo = Nanum_Myeongjo({ subsets: ["latin"], weight: "800" });
-const aclonica = Aclonica({ subsets: ["latin"], weight: "400" });
 
 export default function Home() {
   const [openDialogId, setOpenDialogId] = useState(null);
@@ -67,11 +66,7 @@ export default function Home() {
         <header className="py-8">
           <div className="flex items-center justify-between">
             <Link href="/">
-              <div
-                className={`${aclonica.className} text-[20px] font-extrabold tracking-[-0.2px]`}
-              >
-                Prelto
-              </div>
+              <IconLogoWithName />
             </Link>
 
             <Link href="/auth/login">
