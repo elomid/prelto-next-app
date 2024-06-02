@@ -131,7 +131,7 @@ export default function Home() {
             title="Find emerging patterns"
             description="Detect emerging patterns from thousands of comments, giving you a comprehensive understanding of your audience."
             ImageSrc="/patterns.png"
-            ImageAlt="Screenshot of the Ask anything feature"
+            ImageAlt="Screenshot of emerging patterns with four patterns detected in an example collection"
             ImageWidth={960}
             ImageHeight={378}
           />
@@ -140,7 +140,7 @@ export default function Home() {
             title="Automatic labeling"
             description="Categorize all posts automatically based on your custom-defined labels."
             ImageSrc="/labels.png"
-            ImageAlt="Screenshot of the Ask anything feature"
+            ImageAlt="Screenshot of automatic labeling"
             ImageWidth={960}
             ImageHeight={264}
           />
