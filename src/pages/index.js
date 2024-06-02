@@ -13,6 +13,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
+import { IconCheckFilled } from "@/components/icon";
 
 const inter = Inter({ subsets: ["latin"] });
 const nanumMyeongjo = Nanum_Myeongjo({ subsets: ["latin"], weight: "800" });
@@ -20,9 +21,39 @@ const aclonica = Aclonica({ subsets: ["latin"], weight: "400" });
 
 export default function Home() {
   const [openDialogId, setOpenDialogId] = useState(null);
-  // function handleDialogOpenChange(id) {
-  //   setOpenDialogId(id);
-  // }
+  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+
+  async function handleSubmit(e, email, name, message) {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/request-access`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, name, message }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.error);
+      } else {
+        setSubmitted(true);
+        setOpenDialogId(null);
+      }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   function handleDialogOpenChange(id, open) {
     setOpenDialogId(open ? id : null);
@@ -64,11 +95,18 @@ export default function Home() {
                 </p>
               </div>
 
-              <RequestAccessDialog
-                id="dialog-1"
-                open={openDialogId === "dialog-1"}
-                onOpenChange={handleDialogOpenChange}
-              />
+              {submitted ? (
+                <SubmittedMessage />
+              ) : (
+                <RequestAccessDialog
+                  id="dialog-1"
+                  open={openDialogId === "dialog-1"}
+                  onOpenChange={handleDialogOpenChange}
+                  onSubmit={handleSubmit}
+                  submitted={submitted}
+                  isSubmitting={isSubmitting}
+                />
+              )}
             </div>
 
             <Image src="/hero.png" alt="Prelto" width={960} height={552} />
@@ -103,11 +141,18 @@ export default function Home() {
 
           <section className="cta-container flex justify-between items-center p-8 border rounded-3xl">
             <p className="font-medium">Get started with Prelto</p>
-            <RequestAccessDialog
-              id="dialog-2"
-              open={openDialogId === "dialog-2"}
-              onOpenChange={handleDialogOpenChange}
-            />
+            {submitted ? (
+              <SubmittedMessage />
+            ) : (
+              <RequestAccessDialog
+                id="dialog-1"
+                open={openDialogId === "dialog-1"}
+                onOpenChange={handleDialogOpenChange}
+                onSubmit={handleSubmit}
+                submitted={submitted}
+                isSubmitting={isSubmitting}
+              />
+            )}
           </section>
         </div>
       </main>
@@ -120,28 +165,22 @@ export default function Home() {
   );
 }
 
-function RequestAccessDialog({ id, open, onOpenChange }) {
+function RequestAccessDialog({
+  id,
+  open,
+  onOpenChange,
+  submitted,
+  isSubmitting,
+  onSubmit,
+}) {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [name, setName] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e) => {
-    setIsLoading(true);
-    e.preventDefault();
-    // TODO: Add actual endpoint for early access submission
-    setSubmitted(true);
-    setIsLoading(false);
-  };
   return (
     <Dialog open={open} onOpenChange={(open) => onOpenChange(id, open)}>
       <DialogTrigger asChild>
-        {submitted ? (
-          <div>Request submitted</div>
-        ) : (
-          <Button variant="black">Request early access</Button>
-        )}
+        <Button variant="black">Request early access</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -155,7 +194,7 @@ function RequestAccessDialog({ id, open, onOpenChange }) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="col-span-3"
-              disabled={isLoading}
+              disabled={isSubmitting}
             />
           </div>
           <div className="flex flex-col gap-1.5">
@@ -165,7 +204,8 @@ function RequestAccessDialog({ id, open, onOpenChange }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="col-span-3"
-              disabled={isLoading}
+              disabled={isSubmitting}
+              required={true}
             />
           </div>
           <div className="flex flex-col gap-1.5">
@@ -177,11 +217,15 @@ function RequestAccessDialog({ id, open, onOpenChange }) {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               className="col-span-3"
-              disabled={isLoading}
+              disabled={isSubmitting}
             />
           </div>
 
-          <Button type="submit" onClick={handleSubmit}>
+          <Button
+            type="submit"
+            onClick={(e) => onSubmit(e, email, name, message)}
+            disabled={isSubmitting}
+          >
             Submit request
           </Button>
         </div>
@@ -215,5 +259,13 @@ function Section({
         height={ImageHeight}
       />
     </section>
+  );
+}
+
+function SubmittedMessage() {
+  return (
+    <p className="text-sm rounded-full bg-[#EFF1F1] px-4 py-2 font-medium flex items-center gap-2">
+      Request submitted. We’ll reach out shortly. <IconCheckFilled />
+    </p>
   );
 }
