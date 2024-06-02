@@ -109,7 +109,13 @@ export default function Home() {
               )}
             </div>
 
-            <Image src="/hero.png" alt="Prelto" width={960} height={552} />
+            <Image
+              src="/hero.png"
+              alt="Prelto"
+              width={960}
+              height={552}
+              priority={true}
+            />
           </section>
 
           <Section
