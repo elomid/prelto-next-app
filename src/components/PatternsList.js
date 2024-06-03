@@ -23,32 +23,25 @@ function PatternsList({ collectionId }) {
     mutate,
   } = useSWR(`/api/collections/${collectionId}/patterns`, fetcher);
 
-  function handleRecalculatePatterns() {
+  async function handleRecalculatePatterns() {
     setIsCalculatingPatterns(true);
     setCalculationError(null);
 
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/collections/${collectionId}/calculate-patterns`,
-      {
+    try {
+      await fetchResponse({
         method: "POST",
-      }
-    )
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to recalculate patterns");
-        }
-        mutate();
-        return response.json();
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        setCalculationError(
-          "An error occurred while calculating patterns. Please try again in a few seconds."
-        );
-      })
-      .finally(() => {
-        setIsCalculatingPatterns(false);
+        url: `/api/collections/${collectionId}/calculate-patterns`,
+        isProtected: true,
       });
+      mutate();
+    } catch (error) {
+      console.error("Error:", error.message);
+      setCalculationError(
+        "An error occurred while calculating patterns. Please try again in a few seconds."
+      );
+    } finally {
+      setIsCalculatingPatterns(false);
+    }
   }
 
   if (error) return <div>Failed to load patterns.</div>;

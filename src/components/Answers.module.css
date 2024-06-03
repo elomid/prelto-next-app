@@ -1,24 +1,40 @@
 .markdown h1 {
-  font-size: 2em;
-  font-weight: 500;
-  color: #000;
-}
-
-.markdown h2 {
   font-size: 1.75em;
   font-weight: 500;
   color: #000;
+  margin: 16px 0;
 }
 
-.markdown h3 {
+.markdown h2 {
   font-size: 1.5em;
   font-weight: 500;
   color: #000;
+  margin: 16px 0;
+}
+
+.markdown h3 {
+  font-size: 1.25em;
+  font-weight: 500;
+  color: #000;
+  margin: 16px 0;
+}
+
+.markdown p {
+  margin-bottom: 8px;
+  color: #484848;
 }
 
 .markdown blockquote {
-  padding: 0 24px;
+  padding: 20px;
   background-color: #f4f5f7;
   border-radius: 8px;
   margin-top: 16px;
+}
+
+.markdown blockquote p {
+  margin: 0;
+}
+
+.markdown li {
+  margin-bottom: 12px;
 }
