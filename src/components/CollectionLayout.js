@@ -56,8 +56,8 @@ const Layout = ({ children }) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <nav className="font-medium text-sm h-full pt-8 px-5 z-50">
-          <ul className="flex flex-col gap-1 group">
+        <nav className="font-medium text-sm h-full pt-8 z-50">
+          <ul className="flex flex-col gap-1 group  px-5">
             <MenuItem
               href="/collections"
               title="Collections"
@@ -71,8 +71,9 @@ const Layout = ({ children }) => {
               isExpanded={isExpanded}
             />
           </ul>
+          {/* TODO: figure out why dropdown is not working here */}
+          {/* {isExpanded && <UserProfile />} */}
         </nav>
-        {isExpanded && <UserProfile />}
       </aside>
       <main className="px-16 pl-32 mr-auto max-w-[1400px] py-8">
         {children}
