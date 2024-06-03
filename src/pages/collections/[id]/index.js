@@ -49,8 +49,10 @@ import {
 } from "@radix-ui/react-icons";
 import { fetchResponse } from "@/utils/fetchUtils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import useRequireAuth from "@/hooks/useRequireAuth";
 
 const CollectionPage = () => {
+  const { user, isLoading, isError } = useRequireAuth();
   const router = useRouter();
   const { id, tab = "posts" } = router.query;
   const [revalidateInterval, setRevalidateInterval] = useState(0);
