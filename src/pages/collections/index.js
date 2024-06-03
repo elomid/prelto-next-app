@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useSWR from "swr";
 import fetcher from "@/utils/fetcher";
-import useUser from "@/hooks/useUser";
+import useRequireAuth from "@/hooks/useRequireAuth";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import Layout from "@/components/Layout";
@@ -11,11 +11,13 @@ import { parseCookies } from "nookies";
 import { Badge } from "@/components/ui/badge";
 
 export default function CollectionsPage() {
+  const { user, isLoading, isError } = useRequireAuth();
+
   const [isLoadingCollectionCreation, setIsLoadingCollectionCreation] =
     useState(false);
-  const { user, isLoading, isError } = useUser();
+
   const { data: collections, error: collectionsError } = useSWR(
-    user ? `/api/collections?userId=${user.id}` : null,
+    user && user.id ? `/api/collections?userId=${user.id}` : null,
     fetcher
   );
   const router = useRouter();
@@ -50,12 +52,14 @@ export default function CollectionsPage() {
     }
   };
 
-  if (isLoading)
+  if (isLoading || !user) {
     return (
       <Layout>
         <div>Loading...</div>
       </Layout>
     );
+  }
+
   if (isError)
     return (
       <Layout>
