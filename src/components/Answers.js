@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { parseCookies } from "nookies";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Markdown from "markdown-to-jsx";
+import { fetchResponse } from "@/utils/fetchUtils";
 
 import styles from "./Answers.module.css";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -24,30 +24,21 @@ function Answers({ collectionId }) {
     setError(null);
     setLoading(true);
     setQuestion("");
-    const { token } = parseCookies();
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/collections/${collectionId}/answer`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ query: question }),
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Something went wrong. Please try again later.");
-      }
-      const data = await response.json();
-      setMessages((messages) => [
-        ...messages,
+      const data = await fetchResponse({
+        method: "POST",
+        url: `/api/collections/${collectionId}/answer`,
+        isProtected: true,
+        body: { query: question },
+      });
+
+      setMessages((prevMessages) => [
+        ...prevMessages,
         { type: "answer", content: data },
       ]);
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error:", error.message);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -68,7 +59,7 @@ function Answers({ collectionId }) {
             key={index}
             className={`border rounded-lg p-8 text-sm  ${
               message.type == "question"
-                ? " font-medium bg-gray-300 text-black"
+                ? " font-regular bg-gray-900 text-white"
                 : "bg-white text-gray-700"
             }`}
           >
