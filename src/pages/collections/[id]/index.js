@@ -47,6 +47,8 @@ import {
   ChevronDownIcon,
   DotsHorizontalIcon,
 } from "@radix-ui/react-icons";
+import { fetchResponse } from "@/utils/fetchUtils";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const CollectionPage = () => {
   const router = useRouter();
@@ -67,6 +69,7 @@ const CollectionPage = () => {
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState(collection?.name); // TODO: fix this
   const [isRenaming, setIsRenaming] = useState(false);
+  const [renameError, setRenameError] = useState(null);
 
   const { data: posts, error: postsError } = useSWR(
     id && collection?.status === "POSTS_FETCHED"
@@ -105,32 +108,36 @@ const CollectionPage = () => {
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/collections/${id}`,
-      {
+    try {
+      await fetchResponse({
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    setIsDeleteDialogOpen(false);
-    setIsDeleting(false);
-    router.push("/collections");
+        url: `/api/collections/${id}`,
+      });
+
+      router.push("/collections");
+    } catch (error) {
+      console.error("Error:", error.message);
+      setRenameError(error.message);
+    } finally {
+      setIsDeleteDialogOpen(false);
+      setIsDeleting(false);
+    }
   };
 
   const handleRename = async () => {
     setIsRenaming(true);
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/collections/${id}/rename`,
-      {
+    setRenameError(null);
+    try {
+      await fetchResponse({
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name: newCollectionName }),
-      }
-    );
+        url: `/api/collections/${id}/rename`,
+        isProtected: true,
+        body: { name: newCollectionName },
+      });
+    } catch (error) {
+      console.error("Error:", error.message);
+      setRenameError(error.message);
+    }
     setIsRenaming(false);
     setIsRenameDialogOpen(false);
     mutateCollection();
@@ -184,6 +191,12 @@ const CollectionPage = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+            {renameError && (
+              <Alert variant="destructive" className="mt-6">
+                <AlertTitle>Something went wrong</AlertTitle>
+                <AlertDescription>Please try again</AlertDescription>
+              </Alert>
+            )}
           </div>
           {collection.status !== "POSTS_FETCHED" ? (
             <div className="flex bg-gray-100 justify-center items-center p-16 rounded-3xl">
