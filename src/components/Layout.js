@@ -2,10 +2,11 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { IconSettings, IconCollections, IconAnswers } from "./icon";
 import useUser from "@/hooks/useUser";
+import UserProfile from "@/components/UserProfile";
 
 const Layout = ({ children }) => {
   const router = useRouter();
-  const { user, isLoading, isError } = useUser();
+
   return (
     <div className="flex h-full">
       <aside className="w-64 fixed h-full border-r bg-white flex flex-col justify-between">
@@ -44,9 +45,7 @@ const Layout = ({ children }) => {
           </ul>
         </nav>
         <div>
-          <div className="text-sm  px-6 py-4 text-gray-700 border-t">
-            {user && user.email}
-          </div>
+          <UserProfile />
         </div>
       </aside>
       <main className="ml-64 w-full h-full">

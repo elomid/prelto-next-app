@@ -4,6 +4,7 @@ import { IconSettings, IconCollections, IconAnswers } from "./icon";
 import useUser from "@/hooks/useUser";
 import { useState, useCallback } from "react";
 import { debounce } from "@/lib/utils";
+import UserProfile from "@/components/UserProfile";
 
 const MenuItem = ({ href, title, isExpanded, iconComponent }) => {
   const router = useRouter();
@@ -71,14 +72,7 @@ const Layout = ({ children }) => {
             />
           </ul>
         </nav>
-        {isExpanded && (
-          <div
-            className="text-sm px-6 py-4 text-gray-700 border-t opacity-0 transition-opacity duration-200 ease-in-out"
-            style={{ transitionDelay: "0.1s" }}
-          >
-            {user && user.email}
-          </div>
-        )}
+        {isExpanded && <UserProfile />}
       </aside>
       <main className="px-16 pl-32 mr-auto max-w-[1400px] py-8">
         {children}
