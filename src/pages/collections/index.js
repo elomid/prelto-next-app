@@ -50,8 +50,18 @@ export default function CollectionsPage() {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Failed to load user.</div>;
+  if (isLoading)
+    return (
+      <Layout>
+        <div>Loading...</div>
+      </Layout>
+    );
+  if (isError)
+    return (
+      <Layout>
+        <div>Failed to load user.</div>
+      </Layout>
+    );
 
   return (
     <Layout>
@@ -87,8 +97,8 @@ export default function CollectionsPage() {
                     </div>
                     <div className="mt-8 flex gap-2">
                       {collection.subreddits &&
-                        collection.subreddits.map((subreddit) => (
-                          <Badge key={subreddit.id}>{subreddit}</Badge>
+                        collection.subreddits.map((subreddit, index) => (
+                          <Badge key={index}>{subreddit}</Badge>
                         ))}
                     </div>
                     <div className="absolute bottom-0 right-0 w-1/6 h-[30px] bg-gradient-to-r from-transparent to-white group-hover:to-gray-50 transition-all"></div>
