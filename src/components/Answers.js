@@ -71,6 +71,10 @@ function Answers({ collectionId }) {
       </div>
       <div className="question-container fixed bottom-0 left-32 right-16 flex">
         <div className="bg-white p-8 flex gap-2 items-center justify-between shadow-2xl rounded-3xl rounded-br-none rounded-bl-none border border-b-0 w-full max-w-[1208px] ">
+          <pre>
+            process.env.NEXT_PUBLIC_MIXPANEL_TOKEN:{" "}
+            {process.env.NEXT_PUBLIC_MIXPANEL_TOKEN}
+          </pre>
           <Input
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
