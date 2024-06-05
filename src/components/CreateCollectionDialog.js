@@ -12,7 +12,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const CreateCollectionDialog = ({ onCreateCollection, isLoading }) => {
+const CreateCollectionDialog = ({
+  onCreateCollection,
+  isLoading,
+  variant = "secondary",
+}) => {
   const [collectionName, setProjectName] = useState("");
   const [subreddits, setSubreddits] = useState("");
   const [topic, setTopic] = useState("");
@@ -24,7 +28,9 @@ const CreateCollectionDialog = ({ onCreateCollection, isLoading }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Create collection</Button>
+        <Button variant={variant === "secondary" ? "outline" : ""}>
+          Create collection
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
