@@ -80,10 +80,13 @@ function Answers({ collectionId }) {
           <Button
             onClick={handleAskQuestion}
             size="lg"
-            className="p-6"
+            className="p-6 flex items-center justify-center gap-2"
             disabled={loading}
           >
             {loading ? "Loading..." : "Send"}
+            {!loading && (
+              <div className="text-xs text-white/60  mt-[1px]">10</div>
+            )}
           </Button>
         </div>
       </div>
