@@ -28,19 +28,6 @@ function CreditIndicator() {
     }
   }
 
-  async function handleManageSubscription() {
-    try {
-      const data = await fetchResponse({
-        method: "POST",
-        url: "/api/payment/manage",
-      });
-
-      window.location.href = data.url;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   return (
     // <DropdownMenu>
     //   <DropdownMenuTrigger asChild>
@@ -70,7 +57,6 @@ function CreditIndicator() {
           </Button>
         </div>
       )}
-      <Button onClick={handleManageSubscription}>Manage</Button>
     </div>
   );
 }
