@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { destroyCookie } from "nookies";
 import { useRouter } from "next/router";
 import useUser from "@/hooks/useUser";
@@ -11,6 +12,7 @@ import {
 function UserProfile() {
   const router = useRouter();
   const { user, isLoading, isError } = useUser();
+
   function handleLogOut() {
     destroyCookie(null, "token");
     router.push("/");
