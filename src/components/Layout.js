@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { IconSettings, IconCollections, IconAnswers } from "./icon";
-import useUser from "@/hooks/useUser";
 import UserProfile from "@/components/UserProfile";
+import { fetchResponse } from "@/utils/fetchUtils";
+import { Button } from "./ui/button";
+import CreditIndicator from "@/components/CreditIndicator";
 
 const Layout = ({ children }) => {
   const router = useRouter();
@@ -46,6 +48,7 @@ const Layout = ({ children }) => {
         </nav>
         <div>
           <UserProfile />
+          <CreditIndicator />
         </div>
       </aside>
       <main className="ml-64 w-full h-full">

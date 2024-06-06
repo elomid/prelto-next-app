@@ -13,6 +13,7 @@ import fetcher from "@/utils/fetcher";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import PatternDetailsSheet from "./PatternDetailsSheet";
+import { fetchResponse } from "@/utils/fetchUtils";
 
 function PatternsList({ collectionId }) {
   const [isCalculatingPatterns, setIsCalculatingPatterns] = useState(false);
@@ -36,9 +37,13 @@ function PatternsList({ collectionId }) {
       mutate();
     } catch (error) {
       console.error("Error:", error.message);
-      setCalculationError(
-        "An error occurred while calculating patterns. Please try again in a few seconds."
-      );
+      if (error.status === 403) {
+        setCalculationError(error.message);
+      } else {
+        setCalculationError(
+          "An error occurred while calculating patterns. Please try again in a few seconds."
+        );
+      }
     } finally {
       setIsCalculatingPatterns(false);
     }
@@ -46,7 +51,7 @@ function PatternsList({ collectionId }) {
 
   if (error) return <div>Failed to load patterns.</div>;
   if (!patterns) return <div>Loading patterns...</div>;
-  if (isCalculatingPatterns) return <div>Recalculating patterns...</div>;
+  if (isCalculatingPatterns) return <div>Calculating patterns...</div>;
 
   return (
     <div className="flex flex-col gap-6 min-w-0 w-full">
@@ -78,10 +83,14 @@ function PatternsList({ collectionId }) {
               <Label>Patterns found</Label>
               <div className="text-gray-700">{patterns.length}</div>
             </div>
-            <Button className="mr-auto" onClick={handleRecalculatePatterns}>
-              {isCalculatingPatterns
-                ? "Recalculating..."
-                : "Re-calculate patterns"}
+            <Button
+              className="mr-auto flex items-center gap-2"
+              onClick={handleRecalculatePatterns}
+            >
+              {isCalculatingPatterns ? "Calculating..." : `Calculate patterns`}
+              {!isCalculatingPatterns && (
+                <div className="text-xs text-white/60 mt-[1.5px]">100</div>
+              )}
             </Button>
           </div>
         </aside>
