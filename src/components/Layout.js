@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import { IconSettings, IconCollections, IconAnswers } from "./icon";
 import useUser from "@/hooks/useUser";
 import UserProfile from "@/components/UserProfile";
+import { fetchResponse } from "@/utils/fetchUtils";
+import { Button } from "./ui/button";
 
 const Layout = ({ children }) => {
   const router = useRouter();
@@ -45,6 +47,9 @@ const Layout = ({ children }) => {
           </ul>
         </nav>
         <div>
+          {/* <div>
+            <Button onClick={initiatePayment}>Upgrade</Button>
+          </div> */}
           <UserProfile />
         </div>
       </aside>
@@ -56,3 +61,19 @@ const Layout = ({ children }) => {
 };
 
 export default Layout;
+
+async function initiatePayment() {
+  console.log("initiating payments...");
+  try {
+    const data = await fetchResponse({
+      method: "POST",
+      url: "/api/payment/initiate",
+    });
+
+    console.log("url from stripe: ", data.url);
+
+    window.location.href = data.url;
+  } catch (error) {
+    console.error(error);
+  }
+}
