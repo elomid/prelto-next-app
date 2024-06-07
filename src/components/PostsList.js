@@ -80,7 +80,7 @@ const PostsList = ({ posts, collectionId }) => {
                     ? "bg-[#000] text-white"
                     : "text-gray-700 hover:bg-[#F0F4F4]"
                 }`}
-                onClick={(e) => handleSearch(e.target.value)}
+                onClick={() => handleCategoryClick(value)}
               >
                 {label}
               </button>
