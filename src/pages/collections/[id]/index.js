@@ -16,21 +16,13 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import * as Tabs from "@radix-ui/react-tabs";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -39,14 +31,9 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import {
-  CaretSortIcon,
-  ChevronDownIcon,
-  DotsHorizontalIcon,
-} from "@radix-ui/react-icons";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { fetchResponse } from "@/utils/fetchUtils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import useRequireAuth from "@/hooks/useRequireAuth";
@@ -334,12 +321,12 @@ function CollectionStatus({ status }) {
   const messages = {
     DRAFT: {
       title: "Connecting to Reddit",
-      variant: "default",
+      variant: "info",
       message: "Establishing a connection to Reddit...",
     },
     FETCHING_POSTS: {
       title: "Retrieving content from Reddit",
-      variant: "default",
+      variant: "info",
       message: "Posts and comments are being retrieved from Reddit.",
     },
     FETCHING_POSTS_ERROR: {
@@ -355,7 +342,7 @@ function CollectionStatus({ status }) {
     },
     ANALYZING_POSTS: {
       title: "Analyzing posts and comments",
-      variant: "default",
+      variant: "info",
       message:
         "Posts and comments are being analyzed. Some features may not be functional during this process.",
     },
@@ -367,7 +354,7 @@ function CollectionStatus({ status }) {
     },
     ANALYSIS_COMPLETED: {
       title: "Analysis complete",
-      variant: "default",
+      variant: "info",
       message: "The analysis of posts and comments is complete.",
     },
   };

@@ -2,13 +2,7 @@ import { useState } from "react";
 import useSWR from "swr";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import fetcher from "@/utils/fetcher";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
@@ -51,7 +45,13 @@ function PatternsList({ collectionId }) {
 
   if (error) return <div>Failed to load patterns.</div>;
   if (!patterns) return <div>Loading patterns...</div>;
-  if (isCalculatingPatterns) return <div>Calculating patterns...</div>;
+  if (isCalculatingPatterns)
+    return (
+      <div>
+        Calculating patterns. This can take up to a few minutes. You can
+        navigate away, and come back later to see the results.
+      </div>
+    );
 
   return (
     <div className="flex flex-col gap-6 min-w-0 w-full">
