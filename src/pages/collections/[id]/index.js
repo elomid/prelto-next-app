@@ -69,14 +69,13 @@ const CollectionPage = () => {
   );
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
-  const [newCollectionName, setNewCollectionName] = useState(collection?.name); // TODO: fix this
+  // TODO: fix this, not working correctly
+  const [newCollectionName, setNewCollectionName] = useState(collection?.name);
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameError, setRenameError] = useState(null);
 
   const { data: posts, error: postsError } = useSWR(
-    id && collection?.status === "POSTS_FETCHED"
-      ? `/api/collections/${id}/posts`
-      : null,
+    id ? `/api/collections/${id}/posts` : null,
     fetcher,
     { refreshInterval: revalidateInterval }
   );
@@ -85,15 +84,18 @@ const CollectionPage = () => {
     if (collection) {
       switch (collection.status) {
         case "DRAFT":
-          setLoadingMessage("Connecting to Reddit...");
           setRevalidateInterval(5000);
           break;
         case "FETCHING_POSTS":
-          setLoadingMessage("Retrieving data from Reddit...");
           setRevalidateInterval(5000);
           break;
         case "POSTS_FETCHED":
-          setLoadingMessage("");
+          setRevalidateInterval(5000);
+          break;
+        case "ANALYZING_POSTS":
+          setRevalidateInterval(5000);
+          break;
+        case "ANALYSIS_COMPLETED":
           setRevalidateInterval(0);
           break;
         default:
@@ -200,63 +202,61 @@ const CollectionPage = () => {
               </Alert>
             )}
           </div>
-          {collection.status !== "POSTS_FETCHED" ? (
-            <div className="flex bg-gray-100 justify-center items-center p-16 rounded-3xl">
-              <Loader color="#D7D0BC" text={loadingMessage} />
-            </div>
-          ) : (
-            <Tabs.Root
-              value={tab}
-              onValueChange={handleTabChange}
-              className="tabs-root"
-            >
-              <Tabs.List className="flex gap-6 border-b mb-6">
-                <Tabs.Trigger
-                  value="posts"
-                  className={`border-b-4  py-4 font-medium transition-all ${
-                    tab === "posts"
-                      ? " border-black text-black"
-                      : " border-transparent text-gray-600"
-                  }`}
-                >
-                  Posts
-                </Tabs.Trigger>
-                <Tabs.Trigger
-                  value="patterns"
-                  className={`border-b-4  py-4 font-medium  transition-all ${
-                    tab === "patterns"
-                      ? " border-black text-black"
-                      : "border-transparent text-gray-600"
-                  }`}
-                >
-                  Patterns
-                </Tabs.Trigger>
-                <Tabs.Trigger
-                  value="answers"
-                  className={`border-b-4  py-4 font-medium  transition-all ${
-                    tab === "answers"
-                      ? " border-black text-black"
-                      : "border-transparent text-gray-600"
-                  }`}
-                >
-                  Answers
-                </Tabs.Trigger>
-              </Tabs.List>
-              <Tabs.Content value="posts">
-                {posts ? (
-                  <PostsList posts={posts} collectionId={id} />
-                ) : (
-                  <div>Loading posts...</div>
-                )}
-              </Tabs.Content>
-              <Tabs.Content value="patterns">
-                <PatternsList collectionId={id} />
-              </Tabs.Content>
-              <Tabs.Content value="answers" className="answers-content">
-                <Answers collectionId={id} />
-              </Tabs.Content>
-            </Tabs.Root>
-          )}
+          {collection.status != "POSTS_FETCHED" &&
+            collection.status != "ANALYSIS_COMPLETED" && (
+              <CollectionStatus status={collection.status} />
+            )}
+          <Tabs.Root
+            value={tab}
+            onValueChange={handleTabChange}
+            className="tabs-root"
+          >
+            <Tabs.List className="flex gap-6 border-b mb-6">
+              <Tabs.Trigger
+                value="posts"
+                className={`border-b-4  py-4 font-medium transition-all ${
+                  tab === "posts"
+                    ? " border-black text-black"
+                    : " border-transparent text-gray-600"
+                }`}
+              >
+                Posts
+              </Tabs.Trigger>
+              <Tabs.Trigger
+                value="patterns"
+                className={`border-b-4  py-4 font-medium  transition-all ${
+                  tab === "patterns"
+                    ? " border-black text-black"
+                    : "border-transparent text-gray-600"
+                }`}
+              >
+                Patterns
+              </Tabs.Trigger>
+              <Tabs.Trigger
+                value="answers"
+                className={`border-b-4  py-4 font-medium  transition-all ${
+                  tab === "answers"
+                    ? " border-black text-black"
+                    : "border-transparent text-gray-600"
+                }`}
+              >
+                Answers
+              </Tabs.Trigger>
+            </Tabs.List>
+            <Tabs.Content value="posts">
+              {posts ? (
+                <PostsList posts={posts} collectionId={id} />
+              ) : (
+                <div>Loading posts...</div>
+              )}
+            </Tabs.Content>
+            <Tabs.Content value="patterns">
+              <PatternsList collectionId={id} />
+            </Tabs.Content>
+            <Tabs.Content value="answers" className="answers-content">
+              <Answers collectionId={id} />
+            </Tabs.Content>
+          </Tabs.Root>
         </div>
       )}
 
@@ -319,3 +319,62 @@ const CollectionPage = () => {
 };
 
 export default CollectionPage;
+
+/*
+  'DRAFT',
+  'FETCHING_POSTS',
+  'POSTS_FETCHED',
+  'ANALYZING_POSTS',
+  'ANALYSIS_COMPLETED',
+  'FETCH_ERROR',
+  'ANALYSIS_ERROR'
+*/
+
+function CollectionStatus({ status }) {
+  const messages = {
+    DRAFT: {
+      title: "Connecting to Reddit",
+      variant: "default",
+      message: "Establishing a connection to Reddit...",
+    },
+    FETCHING_POSTS: {
+      title: "Retrieving content from Reddit",
+      variant: "default",
+      message: "Posts and comments are being retrieved from Reddit.",
+    },
+    FETCHING_POSTS_ERROR: {
+      title: "Unable to retrieve posts",
+      variant: "destructive",
+      message:
+        "There was a problem retrieving posts from Reddit. A retry will happen in a few minutes. If the problem persists, please reach out to support.",
+    },
+    POSTS_FETCHED: {
+      title: "Posts retrieved successfully",
+      variant: "default",
+      message: "Posts have been successfully retrieved from Reddit.",
+    },
+    ANALYZING_POSTS: {
+      title: "Analyzing posts and comments",
+      variant: "default",
+      message:
+        "Posts and comments are being analyzed. Some features may not be functional during this process.",
+    },
+    ANALYSIS_ERROR: {
+      title: "Unable to analyze posts",
+      variant: "destructive",
+      message:
+        "There was a problem analyzing the posts. Please try again or contact support if the problem persists.",
+    },
+    ANALYSIS_COMPLETED: {
+      title: "Analysis complete",
+      variant: "default",
+      message: "The analysis of posts and comments is complete.",
+    },
+  };
+  return (
+    <Alert variant={messages[status].variant} className="my-6">
+      <AlertTitle>{messages[status].title}</AlertTitle>
+      <AlertDescription>{messages[status].message}</AlertDescription>
+    </Alert>
+  );
+}
