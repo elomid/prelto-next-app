@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import useSWR from "swr";
 import { formatDate } from "@/utils/dateUtils";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+
+import useDebounce from "@/hooks/useDebounce";
+
 import {
   Sheet,
   SheetTrigger,
@@ -19,15 +21,17 @@ import Highlighter from "react-highlight-words";
 const PostsList = ({ posts, collectionId }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
   const { data: searchResults, error } = useSWR(
-    searchQuery
-      ? `/api/collections/${collectionId}/posts/search?query=${searchQuery}`
+    debouncedSearchQuery
+      ? `/api/collections/${collectionId}/posts/search?query=${debouncedSearchQuery}`
       : null,
     fetcher
   );
 
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
+  const handleSearch = (query) => {
+    setSearchQuery(query);
   };
 
   const handleCategoryClick = (category) => {
@@ -76,7 +80,7 @@ const PostsList = ({ posts, collectionId }) => {
                     ? "bg-[#000] text-white"
                     : "text-gray-700 hover:bg-[#F0F4F4]"
                 }`}
-                onClick={() => handleCategoryClick(value)}
+                onClick={(e) => handleSearch(e.target.value)}
               >
                 {label}
               </button>
@@ -91,7 +95,7 @@ const PostsList = ({ posts, collectionId }) => {
             placeholder="Search posts and comments"
             className="rounded-full px-6"
             value={searchQuery}
-            onChange={handleSearch}
+            onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
         <ul className="flex flex-col gap-3">
