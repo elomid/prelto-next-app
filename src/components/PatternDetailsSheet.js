@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import fetcher from "@/utils/fetcher";
-import { Card } from "@/components/ui/card";
+import Link from "next/link";
 
 const PatternDetailsSheet = ({ pattern }) => {
   const { data, error } = useSWR(
@@ -17,12 +17,17 @@ const PatternDetailsSheet = ({ pattern }) => {
   // Create a map of posts by their IDs
   const postsMap = new Map(posts.map((post) => [post.id, post]));
 
+  //TODO: simplify this commentByPostId logic
+  //TODO: better UI for showing comments and posts invidiually and as a group inside the sheet
+
   // Group comments by postId
   const commentsByPostId = comments.reduce((acc, comment) => {
-    const postId = comment.post?.id || comment.postId;
+    const postId = comment.post_id || comment.postId;
+    const postTitle = comment.post_title || comment.postTitle;
+    const collectionId = 36;
     if (!acc[postId]) {
       acc[postId] = {
-        post: comment.post,
+        post: { id: postId, title: postTitle, collection_id: collectionId },
         comments: [],
       };
     }
@@ -44,7 +49,11 @@ const PatternDetailsSheet = ({ pattern }) => {
         </div>
         <div className="flex flex-col text-sm">
           {posts.map((post) => (
-            <div key={post.id} className="border-b px-6 py-6">
+            <Link
+              href={`/collections/${post.collection_id}/posts/${post.id}`}
+              key={post.id}
+              className="border-b px-6 py-6 bg-red-white hover:bg-gray-50"
+            >
               <div>
                 <h4 className="font-medium">{post.title}</h4>
                 {post.content && <p className="line-clamp-3">{post.content}</p>}
@@ -61,7 +70,7 @@ const PatternDetailsSheet = ({ pattern }) => {
                   </div>
                 )}
               </div>
-            </div>
+            </Link>
           ))}
           {Object.entries(commentsByPostId)
             .filter(([postId]) => !postsMap.has(postId))
@@ -72,12 +81,13 @@ const PatternDetailsSheet = ({ pattern }) => {
                 </h4>
                 <div className="flex flex-col gap-3 text-sm mt-3">
                   {comments.map((comment) => (
-                    <div
+                    <Link
+                      href={`/collections/${post.collection_id}/posts/${postId}`}
                       key={comment.id}
-                      className="p-5 border rounded-md bg-gray-50"
+                      className="p-5 border rounded-md bg-white hover:bg-gray-50"
                     >
                       <p className="line-clamp-3">{comment.content}</p>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               </div>
