@@ -5,18 +5,14 @@ import useRequireAuth from "@/hooks/useRequireAuth";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import Layout from "@/components/Layout";
-import CreateCollectionDialog from "@/components/CreateCollectionDialog";
+
 import { useRouter } from "next/router";
-import { parseCookies } from "nookies";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import EmptyState from "@/components/EmptyState";
 
 export default function CollectionsPage() {
   const { user, isLoading, isError } = useRequireAuth();
-
-  const [isLoadingCollectionCreation, setIsLoadingCollectionCreation] =
-    useState(false);
 
   const {
     data: collections,
@@ -27,36 +23,6 @@ export default function CollectionsPage() {
     fetcher
   );
   const router = useRouter();
-
-  const handleCreateNewCollection = async (data) => {
-    setIsLoadingCollectionCreation(true);
-    const { token } = parseCookies();
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/collections`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(data),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to create collection");
-      }
-
-      const collection = await response.json();
-      router.push(`/collections/${collection.id}`);
-    } catch (error) {
-      console.error("Error creating collection:", error);
-    } finally {
-      setIsLoadingCollectionCreation(false);
-    }
-  };
 
   if (isLoading || !user) {
     return (
@@ -83,10 +49,9 @@ export default function CollectionsPage() {
           <h1 className="text-3xl font-medium tracking-tight">Collections</h1>
 
           {!showEmptyState && (
-            <CreateCollectionDialog
-              onCreateCollection={handleCreateNewCollection}
-              isLoading={isLoadingCollectionCreation}
-            />
+            <Link href="/collections/new">
+              <Button variant="outline">Create collection</Button>
+            </Link>
           )}
         </div>
         {showEmptyState ? (
@@ -95,11 +60,9 @@ export default function CollectionsPage() {
             message="Create a collection with the subreddits of your choosing to explore posts by categories, identify patterns, and uncover insights."
           >
             <div>
-              <CreateCollectionDialog
-                onCreateCollection={handleCreateNewCollection}
-                isLoading={isLoadingCollectionCreation}
-                variant="primary"
-              />
+              <Link href="/collections/new">
+                <Button>Create collection</Button>
+              </Link>
             </div>
           </EmptyState>
         ) : (
