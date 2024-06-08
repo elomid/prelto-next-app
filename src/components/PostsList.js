@@ -17,6 +17,7 @@ import { Badge } from "./ui/badge";
 import { Input } from "./ui/input";
 import { IconExternalLink } from "@/components/icon";
 import Highlighter from "react-highlight-words";
+import Link from "next/link";
 
 const PostsList = ({ posts, collectionId }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -111,64 +112,44 @@ const PostsList = ({ posts, collectionId }) => {
             displayedPosts.length > 0 &&
             displayedPosts.map((post) => (
               <li key={post.id}>
-                <Sheet>
-                  <SheetTrigger asChild>
-                    <Card className="flex flex-col overflow-hidden p-6 cursor-pointer gap-3">
-                      <h3 className="font-medium text-sm">
-                        <Highlighter
-                          searchWords={searchQuery.replace(/"/g, "").split(" ")}
-                          textToHighlight={post.title}
-                          highlightClassName="bg-[#a0f8f3]"
-                        />
-                      </h3>
-                      <p className="text-sm text-gray-700 no-wrap overflow-ellipsis whitespace-nowrap overflow-hidden">
-                        <Highlighter
-                          searchWords={searchQuery.replace(/"/g, "").split(" ")}
-                          textToHighlight={post.content}
-                          highlightClassName="bg-[#a0f8f3]"
-                        />
-                      </p>
-                      <div className="flex text-xs items-centers justify-between">
-                        <div className="flex gap-1">
-                          <Badge className="text-xs">{post.subreddit}</Badge>
-                          {post.categories &&
-                            post.categories.length > 0 &&
-                            post.categories.map((category) => (
-                              <Badge
-                                key={category}
-                                variant="outline"
-                                className="text-xs"
-                              >
-                                {category}
-                              </Badge>
-                            ))}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {formatDate(post.original_created_at)} • {post.ups}{" "}
-                          votes
-                        </div>
+                <Link href={`/collections/${collectionId}/posts/${post.id}`}>
+                  <Card className="flex flex-col overflow-hidden p-6 cursor-pointer gap-3 bg-white hover:bg-gray-50">
+                    <h3 className="font-medium text-sm">
+                      <Highlighter
+                        searchWords={searchQuery.replace(/"/g, "").split(" ")}
+                        textToHighlight={post.title}
+                        highlightClassName="bg-[#a0f8f3]"
+                      />
+                    </h3>
+                    <p className="text-sm text-gray-700 no-wrap overflow-ellipsis whitespace-nowrap overflow-hidden">
+                      <Highlighter
+                        searchWords={searchQuery.replace(/"/g, "").split(" ")}
+                        textToHighlight={post.content}
+                        highlightClassName="bg-[#a0f8f3]"
+                      />
+                    </p>
+                    <div className="flex text-xs items-centers justify-between">
+                      <div className="flex gap-1">
+                        <Badge className="text-xs">{post.subreddit}</Badge>
+                        {post.categories &&
+                          post.categories.length > 0 &&
+                          post.categories.map((category) => (
+                            <Badge
+                              key={category}
+                              variant="outline"
+                              className="text-xs"
+                            >
+                              {category}
+                            </Badge>
+                          ))}
                       </div>
-                    </Card>
-                  </SheetTrigger>
-                  <SheetContent side="right">
-                    <SheetHeader className="mb-6">
-                      <SheetTitle>{post.title}</SheetTitle>
-                    </SheetHeader>
-
-                    <div className="flex flex-col gap-4">
-                      <div>{post.content}</div>
-                      <a
-                        variant="outline"
-                        size="sm"
-                        className="border rounded-full px-3 py-2 text-xs font-medium mr-auto flex items-center gap-2"
-                        href={`https://www.reddit.com${post.permalink}`}
-                      >
-                        Open on Reddit <IconExternalLink />
-                      </a>
-                      <Comments postId={post.id} searchQuery={searchQuery} />
+                      <div className="text-xs text-gray-500">
+                        {formatDate(post.original_created_at)} • {post.ups}{" "}
+                        votes
+                      </div>
                     </div>
-                  </SheetContent>
-                </Sheet>
+                  </Card>
+                </Link>
               </li>
             ))}
           {searchQuery && displayedComments.length > 0 && (
