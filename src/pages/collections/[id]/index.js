@@ -329,7 +329,7 @@ function CollectionStatus({ status }) {
       variant: "info",
       message: "Posts and comments are being retrieved from Reddit.",
     },
-    FETCHING_POSTS_ERROR: {
+    FETCH_ERROR: {
       title: "Unable to retrieve posts",
       variant: "destructive",
       message:
@@ -358,6 +358,10 @@ function CollectionStatus({ status }) {
       message: "The analysis of posts and comments is complete.",
     },
   };
+
+  if (!messages[status]) {
+    return;
+  }
   return (
     <Alert variant={messages[status].variant} className="my-6">
       <AlertTitle>{messages[status].title}</AlertTitle>
