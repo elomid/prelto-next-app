@@ -26,7 +26,7 @@ const PostsList = ({ posts, collectionId }) => {
 
   const { data: searchResults, error } = useSWR(
     debouncedSearchQuery
-      ? `/api/collections/${collectionId}/posts/search?query=${debouncedSearchQuery}`
+      ? `/api/collections/${collectionId}/search?query=${debouncedSearchQuery}`
       : null,
     fetcher
   );
@@ -164,20 +164,24 @@ const PostsList = ({ posts, collectionId }) => {
             displayedComments.length > 0 &&
             displayedComments.map((comment) => (
               <li key={comment.id}>
-                <Card className="flex flex-col overflow-hidden gap-3">
-                  <div className="p-6 py-4 font-medium text-xs bg-slate-100">
-                    {comment && comment.title && comment.title}
-                  </div>
-                  <div className="p-6 pt-3">
-                    <p className="text-sm text-gray-700">
-                      <Highlighter
-                        searchWords={searchQuery.replace(/"/g, "").split(" ")}
-                        textToHighlight={comment.content}
-                        highlightClassName="bg-[#a0f8f3]"
-                      />
-                    </p>
-                  </div>
-                </Card>
+                <Link
+                  href={`/collections/${collectionId}/posts/${comment.post_id}`}
+                >
+                  <Card className="flex flex-col overflow-hidden gap-3">
+                    <div className="p-6 py-4 font-medium text-xs bg-slate-100">
+                      {comment && comment.title && comment.title}
+                    </div>
+                    <div className="p-6 pt-3">
+                      <p className="text-sm text-gray-700">
+                        <Highlighter
+                          searchWords={searchQuery.replace(/"/g, "").split(" ")}
+                          textToHighlight={comment.content}
+                          highlightClassName="bg-[#a0f8f3]"
+                        />
+                      </p>
+                    </div>
+                  </Card>
+                </Link>
               </li>
             ))}
         </ul>
