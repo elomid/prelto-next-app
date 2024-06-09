@@ -57,7 +57,7 @@ function Answers({ collectionId }) {
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`border rounded-lg p-8 text-sm  ${
+            className={`border rounded-2xl p-8 text-sm  ${
               message.type == "question"
                 ? " font-regular bg-gray-900 text-white"
                 : "bg-white text-gray-700"
