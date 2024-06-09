@@ -21,7 +21,7 @@ import { IconExternalLink } from "@/components/icon";
 const PostPage = () => {
   const { user, isLoading, isError } = useRequireAuth();
   const router = useRouter();
-  const { id: collectionId, postId } = router.query;
+  const { id: collectionId, postRedditName } = router.query;
   const [revalidateInterval, setRevalidateInterval] = useState(0);
   const {
     data: collection,
@@ -40,8 +40,8 @@ const PostPage = () => {
     isLoading: isPostLoading,
     mutate: mutatePost,
   } = useSWR(
-    collectionId && postId
-      ? `/api/collections/${collectionId}/posts/${postId}`
+    collectionId && postRedditName
+      ? `/api/collections/${collectionId}/posts/${postRedditName}`
       : null,
     fetcher,
     {
@@ -86,7 +86,7 @@ const PostPage = () => {
               <a
                 size="sm"
                 className="bg-white border rounded-full px-3 py-2 text-xs font-medium mr-auto flex items-center gap-2 min-w-0 hover:bg-gray-50"
-                href={`https://www.reddit.com${data.post.permalink}`}
+                href={data.post.permalink}
               >
                 Open on Reddit <IconExternalLink />
               </a>

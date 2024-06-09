@@ -87,8 +87,8 @@ export default function CollectionsPage() {
                           ? "Subreddit"
                           : "Subreddits"}{" "}
                         • 
-                        {collection.postCount}{" "}
-                        {collection.postCount === 1 ? "Post" : "Posts"}
+                        {collection.posts_count}{" "}
+                        {collection.posts_count === 1 ? "Post" : "Posts"}
                       </div>
                       <div className="mt-8 flex gap-2">
                         {collection.subreddits &&
