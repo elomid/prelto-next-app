@@ -8,6 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import PatternDetailsSheet from "./PatternDetailsSheet";
 import { fetchResponse } from "@/utils/fetchUtils";
+import { IconCreditWhite } from "./icon";
 
 function PatternsList({ collectionId }) {
   const [isCalculatingPatterns, setIsCalculatingPatterns] = useState(false);
@@ -84,12 +85,16 @@ function PatternsList({ collectionId }) {
               <div className="text-gray-700">{patterns.length}</div>
             </div>
             <Button
-              className="mr-auto flex items-center gap-2"
+              size="sm"
+              className="mr-auto text-xs flex items-center gap-2 px-4"
               onClick={handleRecalculatePatterns}
             >
-              {isCalculatingPatterns ? "Calculating..." : `Calculate patterns`}
+              {isCalculatingPatterns ? "Finding patterns..." : `Find patterns`}
               {!isCalculatingPatterns && (
-                <div className="text-xs text-white/60 mt-[1.5px]">100</div>
+                <div className="flex items-center gap-0.5 text-xs text-white/70">
+                  <div className="mt-[0.7px]">100</div>
+                  <IconCreditWhite />
+                </div>
               )}
             </Button>
           </div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { formatDateToNow } from "@/utils/dateUtils";
 import fetcher from "@/utils/fetcher";
 import PostsList from "@/components/PostsList";
 import Answers from "@/components/Answers";
@@ -37,6 +38,7 @@ import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { fetchResponse } from "@/utils/fetchUtils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import useRequireAuth from "@/hooks/useRequireAuth";
+import { IconCreditGray } from "@/components/icon";
 
 const CollectionPage = () => {
   const { user, isLoading, isError } = useRequireAuth();
@@ -60,6 +62,8 @@ const CollectionPage = () => {
   const [newCollectionName, setNewCollectionName] = useState(collection?.name);
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameError, setRenameError] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [updateError, setUpdateError] = useState(null);
 
   const { data: posts, error: postsError } = useSWR(
     id ? `/api/collections/${id}/posts` : null,
@@ -134,6 +138,22 @@ const CollectionPage = () => {
     mutateCollection();
   };
 
+  const handleUpdate = async () => {
+    setIsUpdating(true);
+    setUpdateError(null);
+    try {
+      await fetchResponse({
+        method: "GET",
+        url: `/api/collections/${id}/update`,
+      });
+    } catch (error) {
+      console.error("Error:", error.message);
+      setUpdateError(error.message);
+    }
+    setIsUpdating(false);
+    mutateCollection();
+  };
+
   return (
     <CollectionLayout>
       {collectionError || postsError ? (
@@ -142,7 +162,7 @@ const CollectionPage = () => {
         <div>Loading...</div>
       ) : (
         <div className="some-container">
-          <div className="flex flex-col gap-1 mb-8">
+          <div className="flex flex-col gap-1">
             <Breadcrumb className="mb-2">
               <BreadcrumbList>
                 <BreadcrumbItem>
@@ -182,6 +202,29 @@ const CollectionPage = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+
+            <div className="flex flex-col gap-2 my-4">
+              <p className="text-sm text-gray-700">
+                Last updated {formatDateToNow(collection.updated_at)}{" "}
+              </p>
+
+              <Button
+                variant="outline"
+                size="sm"
+                className="mr-auto text-xs flex items-center gap-2 px-4"
+                onClick={handleUpdate}
+                disabled={isUpdating}
+              >
+                {isUpdating ? "Updating collection..." : `Get latest posts`}
+                {!isUpdating && (
+                  <div className="flex items-center gap-0.5 text-xs text-black/50">
+                    <div>100</div>
+                    <IconCreditGray />
+                  </div>
+                )}
+              </Button>
+            </div>
+
             {renameError && (
               <Alert variant="destructive" className="mt-6">
                 <AlertTitle>Something went wrong</AlertTitle>
@@ -363,7 +406,7 @@ function CollectionStatus({ status }) {
     return;
   }
   return (
-    <Alert variant={messages[status].variant} className="my-6">
+    <Alert variant={messages[status].variant} className="my-4">
       <AlertTitle>{messages[status].title}</AlertTitle>
       <AlertDescription>{messages[status].message}</AlertDescription>
     </Alert>

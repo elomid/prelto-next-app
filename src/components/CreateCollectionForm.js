@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { IconCreditWhite } from "./icon";
 
 const CreateCollectionForm = () => {
   const [collectionName, setProjectName] = useState("");
@@ -150,11 +151,17 @@ const CreateCollectionForm = () => {
           </Link>
 
           <Button
-            type="button"
+            className="flex items-center gap-2"
             onClick={handleCreateNewCollection}
             disabled={isCreating}
           >
-            {isCreating ? "Creating..." : "Create"}
+            {isCreating ? "Creating..." : `Create collection`}
+            {!isCreating && (
+              <div className="flex items-center gap-0.5 text-xs text-white/70">
+                <div className="mt-[0.7px]">{subreddits.length * 100}</div>
+                <IconCreditWhite />
+              </div>
+            )}
           </Button>
         </div>
       </Card>

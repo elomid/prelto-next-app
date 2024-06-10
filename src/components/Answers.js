@@ -6,6 +6,7 @@ import { fetchResponse } from "@/utils/fetchUtils";
 
 import styles from "./Answers.module.css";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { IconCreditWhite } from "./icon";
 
 function Answers({ collectionId }) {
   const [question, setQuestion] = useState("");
@@ -77,15 +78,18 @@ function Answers({ collectionId }) {
             placeholder="Type your question here"
             className="rounded-full p-6"
           />
+
           <Button
+            className="flex items-center gap-2"
             onClick={handleAskQuestion}
-            size="lg"
-            className="p-6 flex items-center justify-center gap-2"
             disabled={loading}
           >
-            {loading ? "Loading..." : "Send"}
+            {loading ? "Finding answer..." : `Submit`}
             {!loading && (
-              <div className="text-xs text-white/60  mt-[1px]">10</div>
+              <div className="flex items-center gap-0.5 text-xs text-white/70">
+                <div className="mt-[0.7px]">10</div>
+                <IconCreditWhite />
+              </div>
             )}
           </Button>
         </div>

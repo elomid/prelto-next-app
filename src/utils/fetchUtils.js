@@ -18,7 +18,7 @@ export async function fetchResponse({
       "Content-Type": "application/json",
       ...(isProtected && token && { Authorization: `Bearer ${token}` }),
     },
-    body: JSON.stringify(body),
+    ...(Object.keys(body).length > 0 && { body: JSON.stringify(body) }),
   });
 
   if (!response.ok) {
