@@ -62,7 +62,7 @@ function PatternsList({ collectionId }) {
           <AlertDescription>{calculationError}</AlertDescription>
         </Alert>
       )}
-      <div className="flex gap-6">
+      <div className="flex gap-6 w-full">
         <aside className="min-w-[240px] max-w-[240px] text-sm">
           <div className="flex flex-col gap-6">
             {patterns && patterns.length > 0 && (
@@ -99,19 +99,19 @@ function PatternsList({ collectionId }) {
             </Button>
           </div>
         </aside>
-        <ul className="flex flex-col gap-3">
+        <ul className="flex flex-col gap-3 w-full">
           {patterns.map((pattern) => (
-            <li key={pattern.id}>
+            <li key={pattern.id} className="w-full">
               <Sheet>
                 <SheetTrigger asChild>
-                  <Card className="flex flex-col overflow-hidden p-6 cursor-pointer gap-6">
+                  <Card className="flex flex-col overflow-hidden p-6 cursor-pointer gap-3 w-full">
                     <div className="flex gap-2 items-center">
-                      <CommentCount count={pattern.total_count} />
                       <h3 className="text-sm font-medium">{pattern.title}</h3>
                     </div>
-                    <p className="text-sm overflow-ellipsis overflow-hidden text-gray-700">
-                      {pattern.summary}
-                    </p>
+                    <div className="text-xs text-[#017E76] font-semibold rounded-full px-2 py-1 bg-[#EEFBFA] flex justify-center items-center mr-auto">
+                      {pattern.total_count}{" "}
+                      {pattern.total_count === 1 ? "item" : "items"}
+                    </div>
                   </Card>
                 </SheetTrigger>
                 <PatternDetailsSheet pattern={pattern} />

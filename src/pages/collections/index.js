@@ -82,11 +82,6 @@ export default function CollectionsPage() {
                         {collection.name}
                       </div>
                       <div className="text-sm text-gray-500 mt-1">
-                        {collection.subredditCount}{" "}
-                        {collection.subredditCount === 1
-                          ? "Subreddit"
-                          : "Subreddits"}{" "}
-                        • 
                         {collection.posts_count}{" "}
                         {collection.posts_count === 1 ? "Post" : "Posts"}
                       </div>

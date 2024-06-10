@@ -22,7 +22,7 @@ const PatternDetailsSheet = ({ pattern }) => {
 
   // Group comments by postId
   const commentsByPostId = comments.reduce((acc, comment) => {
-    const postId = comment.post_id || comment.postId;
+    const postId = comment.post_reddit_name;
     const postTitle = comment.post_title || comment.postTitle;
     const collectionId = 36;
     if (!acc[postId]) {
@@ -44,13 +44,13 @@ const PatternDetailsSheet = ({ pattern }) => {
         <div className="flex flex-col gap-6 px-6 mb-2">
           <div className="text-sm">{pattern.summary}</div>
           <div className="text-xs text-[#017E76] font-semibold rounded-full px-2 py-1 bg-[#EEFBFA] flex justify-center items-center mr-auto">
-            {pattern.total_count} comments
+            {pattern.total_count} items
           </div>
         </div>
         <div className="flex flex-col text-sm">
           {posts.map((post) => (
             <Link
-              href={`/collections/${post.collection_id}/posts/${post.id}`}
+              href={`/collections/${post.collection_id}/posts/${post.reddit_name}`}
               key={post.id}
               className="border-b px-6 py-6 bg-red-white hover:bg-gray-50"
             >
