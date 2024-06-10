@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import PatternDetailsSheet from "./PatternDetailsSheet";
 import { fetchResponse } from "@/utils/fetchUtils";
 import { IconCreditWhite } from "./icon";
+import LoaderBig from "@/components/LoaderBig";
 
 function PatternsList({ collectionId }) {
   const [isCalculatingPatterns, setIsCalculatingPatterns] = useState(false);
@@ -48,10 +49,10 @@ function PatternsList({ collectionId }) {
   if (!patterns) return <div>Loading patterns...</div>;
   if (isCalculatingPatterns)
     return (
-      <div>
-        Calculating patterns. This can take up to a few minutes. You can
-        navigate away, and come back later to see the results.
-      </div>
+      <LoaderBig
+        title={"Analyzing patterns"}
+        text="This could take up to a couple of minutes."
+      />
     );
 
   return (
@@ -67,7 +68,7 @@ function PatternsList({ collectionId }) {
           <div className="flex flex-col gap-6">
             {patterns && patterns.length > 0 && (
               <div className="flex flex-col gap-1">
-                <Label>Calculated on</Label>
+                <Label>Generated on</Label>
                 <div className="text-gray-700">
                   {new Date(patterns[0].created_at).toLocaleDateString(
                     "en-US",
