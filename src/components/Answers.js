@@ -7,6 +7,7 @@ import { fetchResponse } from "@/utils/fetchUtils";
 import styles from "./Answers.module.css";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { IconCreditWhite } from "./icon";
+import Loader from "@/components/ui/Loader";
 
 function Answers({ collectionId }) {
   const [question, setQuestion] = useState("");
@@ -17,9 +18,15 @@ function Answers({ collectionId }) {
 
   const handleAskQuestion = async (e) => {
     e.preventDefault();
+
+    const trimmedQuestion = question.trim();
+    if (!trimmedQuestion) {
+      return;
+    }
+
     setMessages((prevMessages) => [
       ...prevMessages,
-      { type: "question", content: question },
+      { type: "question", content: trimmedQuestion },
     ]);
 
     setError(null);
@@ -31,7 +38,7 @@ function Answers({ collectionId }) {
         method: "POST",
         url: `/api/collections/${collectionId}/answer`,
         isProtected: true,
-        body: { query: question },
+        body: { query: trimmedQuestion },
       });
 
       setMessages((prevMessages) => [
@@ -83,8 +90,13 @@ function Answers({ collectionId }) {
             className="flex items-center gap-2"
             onClick={handleAskQuestion}
             disabled={loading}
+            style={{ width: "160px", height: "48px" }}
           >
-            {loading ? "Finding answer..." : `Submit`}
+            {loading ? (
+              <Loader trackColor="#eaeaef80" spinnerColor="white" />
+            ) : (
+              `Submit`
+            )}
             {!loading && (
               <div className="flex items-center gap-0.5 text-xs text-white/70">
                 <div className="mt-[0.7px]">10</div>
