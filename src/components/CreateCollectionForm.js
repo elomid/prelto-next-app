@@ -68,14 +68,23 @@ const CreateCollectionForm = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to create collection");
+        let errorMessage = "Failed to create collection";
+        try {
+          const errorData = await response.json();
+          if (errorData && errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch (jsonError) {
+          console.error("Error parsing server response:", jsonError);
+        }
+        throw new Error(errorMessage);
       }
 
       const collection = await response.json();
       router.push(`/collections/${collection.id}`);
     } catch (error) {
       console.error("Error creating collection:", error);
-      setCreationError("Failed to create collection");
+      setCreationError(error.message);
     } finally {
       setIsCreating(false);
     }
