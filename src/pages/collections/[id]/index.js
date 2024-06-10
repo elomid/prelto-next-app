@@ -8,6 +8,7 @@ import Answers from "@/components/Answers";
 import PatternsList from "@/components/PatternsList";
 import CollectionLayout from "@/components/CollectionLayout";
 import Loader from "@/components/ui/Loader";
+import actionCosts from "@/constants/actionCosts";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -40,6 +41,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import useRequireAuth from "@/hooks/useRequireAuth";
 import { IconCreditGray } from "@/components/icon";
 import LoaderBig from "@/components/LoaderBig";
+import { Badge } from "@/components/ui/badge";
 
 const CollectionPage = () => {
   const { user, isLoading, isError } = useRequireAuth();
@@ -181,6 +183,7 @@ const CollectionPage = () => {
               <h1 className="text-3xl font-medium tracking-tight">
                 {collection.name}
               </h1>
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild className="">
                   <Button variant="outline" className="text-xs">
@@ -204,8 +207,18 @@ const CollectionPage = () => {
               </DropdownMenu>
             </div>
 
+            <div className="mt-2 flex gap-2">
+              {collection.subreddits &&
+                collection.subreddits.map((subreddit, index) => (
+                  <Badge key={index} className="bg-gray-200">
+                    {subreddit}
+                  </Badge>
+                ))}
+            </div>
+
             <div className="flex flex-col gap-2 my-4">
               <p className="text-xs text-gray-700">
+                {collection.posts_count && collection.posts_count} posts •
                 Updated {formatDateToNow(collection.updated_at)}{" "}
               </p>
 
@@ -213,6 +226,7 @@ const CollectionPage = () => {
                 onClick={handleUpdate}
                 isLoading={isUpdating}
                 collectionStatus={collection.status}
+                subreddits={collection.subreddits}
               />
             </div>
 
@@ -353,7 +367,7 @@ export default CollectionPage;
   'ANALYSIS_ERROR'
 */
 
-function UpdateWidget({ collectionStatus, onClick, isLoading }) {
+function UpdateWidget({ collectionStatus, onClick, isLoading, subreddits }) {
   if (
     collectionStatus !== "FETCHING_POSTS" &&
     collectionStatus !== "ANALYZING_POSTS"
@@ -369,7 +383,9 @@ function UpdateWidget({ collectionStatus, onClick, isLoading }) {
         {isLoading ? "Updating collection..." : `Get latest posts`}
         {!isLoading && (
           <div className="flex items-center gap-0.5 text-xs text-black/50">
-            <div className="mt-[0.8px]">100</div>
+            <div className="mt-[0.8px]">
+              {actionCosts.UPDATE_COLLECTION * subreddits.length}
+            </div>
             <IconCreditGray />
           </div>
         )}
