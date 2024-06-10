@@ -39,6 +39,7 @@ import { fetchResponse } from "@/utils/fetchUtils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import useRequireAuth from "@/hooks/useRequireAuth";
 import { IconCreditGray } from "@/components/icon";
+import LoaderBig from "@/components/LoaderBig";
 
 const CollectionPage = () => {
   const { user, isLoading, isError } = useRequireAuth();
@@ -221,6 +222,12 @@ const CollectionPage = () => {
                 <AlertDescription>Please try again</AlertDescription>
               </Alert>
             )}
+            {updateError && (
+              <Alert variant="destructive" className="mt-6">
+                <AlertTitle>Failed to update collection</AlertTitle>
+                <AlertDescription>{updateError}</AlertDescription>
+              </Alert>
+            )}
           </div>
           <Tabs.Root
             value={tab}
@@ -263,7 +270,7 @@ const CollectionPage = () => {
               {posts ? (
                 <PostsList posts={posts} collectionId={id} />
               ) : (
-                <div>Loading posts...</div>
+                <LoaderBig title="" />
               )}
             </Tabs.Content>
             <Tabs.Content value="patterns">

@@ -59,7 +59,7 @@ function PatternsList({ collectionId }) {
     <div className="flex flex-col gap-6 min-w-0 w-full">
       {calculationError && (
         <Alert variant="destructive">
-          <AlertTitle>Failed to calculate patterns</AlertTitle>
+          <AlertTitle>Failed to generate patterns</AlertTitle>
           <AlertDescription>{calculationError}</AlertDescription>
         </Alert>
       )}
