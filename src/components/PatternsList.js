@@ -17,6 +17,7 @@ function PatternsList({ collectionId }) {
   const {
     data: patterns,
     error,
+    isLoading,
     mutate,
   } = useSWR(`/api/collections/${collectionId}/patterns`, fetcher);
 
@@ -47,6 +48,7 @@ function PatternsList({ collectionId }) {
 
   if (error) return <div>Failed to load patterns.</div>;
   if (!patterns) return <div>Loading patterns...</div>;
+  if (isLoading) return <LoaderBig title="" text="" />;
   if (isCalculatingPatterns)
     return (
       <LoaderBig

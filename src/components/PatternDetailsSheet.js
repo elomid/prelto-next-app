@@ -2,14 +2,16 @@ import useSWR from "swr";
 import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import fetcher from "@/utils/fetcher";
 import Link from "next/link";
+import LoaderBig from "./LoaderBig";
 
 const PatternDetailsSheet = ({ pattern }) => {
-  const { data, error } = useSWR(
+  const { data, isLoading, error } = useSWR(
     `/api/patterns/${pattern.id}/details`,
     fetcher
   );
 
   if (error) return <div>Failed to load pattern details.</div>;
+  if (isLoading) return;
   if (!data) return <div>Loading pattern details...</div>;
 
   const { posts, comments } = data;
