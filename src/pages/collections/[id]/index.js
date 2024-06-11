@@ -210,7 +210,10 @@ const CollectionPage = () => {
             <div className="mt-2 flex gap-2">
               {collection.subreddits &&
                 collection.subreddits.map((subreddit, index) => (
-                  <Badge key={index} className="bg-gray-200">
+                  <Badge
+                    key={index}
+                    className="bg-gray-200 hover:bg-gray-200 cursor-default"
+                  >
                     {subreddit}
                   </Badge>
                 ))}
