@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { IconCreditWhite } from "./icon";
+import actionCosts from "@/constants/actionCosts";
 
 const CreateCollectionForm = () => {
   const [collectionName, setProjectName] = useState("");
@@ -167,7 +168,9 @@ const CreateCollectionForm = () => {
             {isCreating ? "Creating..." : `Create collection`}
             {!isCreating && (
               <div className="flex items-center gap-0.5 text-xs text-white/70">
-                <div className="mt-[0.7px]">{subreddits.length * 100}</div>
+                <div className="mt-[0.7px]">
+                  {subreddits.length * actionCosts.UPDATE_COLLECTION}
+                </div>
                 <IconCreditWhite />
               </div>
             )}
