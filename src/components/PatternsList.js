@@ -47,7 +47,6 @@ function PatternsList({ collectionId }) {
   }
 
   if (error) return <div>Failed to load patterns.</div>;
-  if (!patterns) return <div>Loading patterns...</div>;
   if (isLoading) return <LoaderBig title="" text="" />;
   if (isCalculatingPatterns)
     return (

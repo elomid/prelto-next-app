@@ -259,16 +259,7 @@ const CollectionPage = () => {
               >
                 Posts
               </Tabs.Trigger>
-              <Tabs.Trigger
-                value="patterns"
-                className={`border-b-4  py-4 font-medium  transition-all ${
-                  tab === "patterns"
-                    ? " border-black text-black"
-                    : "border-transparent text-gray-600"
-                }`}
-              >
-                Patterns
-              </Tabs.Trigger>
+
               <Tabs.Trigger
                 value="answers"
                 className={`border-b-4  py-4 font-medium  transition-all ${
@@ -278,6 +269,17 @@ const CollectionPage = () => {
                 }`}
               >
                 Answers
+              </Tabs.Trigger>
+
+              <Tabs.Trigger
+                value="patterns"
+                className={`border-b-4  py-4 font-medium  transition-all ${
+                  tab === "patterns"
+                    ? " border-black text-black"
+                    : "border-transparent text-gray-600"
+                }`}
+              >
+                Patterns
               </Tabs.Trigger>
             </Tabs.List>
             <Tabs.Content value="posts">

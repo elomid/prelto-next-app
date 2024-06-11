@@ -17,6 +17,7 @@ import useRequireAuth from "@/hooks/useRequireAuth";
 import { formatDate } from "@/utils/dateUtils";
 import { Card } from "@/components/ui/card";
 import { IconExternalLink } from "@/components/icon";
+import LoaderBig from "@/components/LoaderBig";
 
 const PostPage = () => {
   const { user, isLoading, isError } = useRequireAuth();
@@ -70,6 +71,7 @@ const PostPage = () => {
               </BreadcrumbList>
             </Breadcrumb>
           )}
+          {isPostLoading && <LoaderBig />}
           {data && (
             <div className="flex flex-col gap-1">
               <div className="flex gap-2 justify-between items-center">

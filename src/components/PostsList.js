@@ -147,7 +147,7 @@ const PostsList = ({ posts, collectionId }) => {
                       </div>
                       <div className="text-xs text-gray-500">
                         {formatDate(post.original_created_at)} • {post.ups}{" "}
-                        votes
+                        votes • {post.comments_count} comments
                       </div>
                     </div>
                   </Card>
