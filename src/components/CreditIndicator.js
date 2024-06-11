@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import useUser from "@/hooks/useUser";
 import { Button } from "./ui/button";
 import { fetchResponse } from "@/utils/fetchUtils";
+import { IconCreditGray } from "./icon";
 
 function CreditIndicator() {
   const router = useRouter();
@@ -23,10 +24,10 @@ function CreditIndicator() {
   return (
     <div>
       <div
-        className="w-full align-left text-left text-sm px-6 py-4 text-gray-700 border-t transition-opacity duration-200 ease-in-out"
+        className="w-full align-left text-left text-sm px-6 py-4 text-gray-700 border-t transition-opacity duration-200 ease-in-out flex gap-1 items-center"
         style={{ transitionDelay: "0.1s" }}
       >
-        {user && user.credits} credits left
+        <IconCreditGray /> {user && user.credits} credits left
       </div>
       {user && user.subscriptionStatus === "not subscribed" && (
         <div className="px-4 w-full">
