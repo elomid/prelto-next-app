@@ -157,6 +157,10 @@ const CollectionPage = () => {
     mutateCollection();
   };
 
+  const isBackgroundTaskUpdating =
+    collection?.status === "FETCHING_POSTS" ||
+    collection?.status === "ANALYZING_POSTS";
+
   return (
     <CollectionLayout>
       {collectionError || postsError ? (
@@ -230,6 +234,7 @@ const CollectionPage = () => {
                 isLoading={isUpdating}
                 collectionStatus={collection.status}
                 subreddits={collection.subreddits}
+                isUpadating={isBackgroundTaskUpdating}
               />
             </div>
 
@@ -246,59 +251,63 @@ const CollectionPage = () => {
               </Alert>
             )}
           </div>
-          <Tabs.Root
-            value={tab}
-            onValueChange={handleTabChange}
-            className="tabs-root"
-          >
-            <Tabs.List className="flex gap-6 border-b mb-6">
-              <Tabs.Trigger
-                value="posts"
-                className={`border-b-4  py-4 font-medium transition-all ${
-                  tab === "posts"
-                    ? " border-black text-black"
-                    : " border-transparent text-gray-600"
-                }`}
-              >
-                Posts
-              </Tabs.Trigger>
+          {isBackgroundTaskUpdating && posts?.length === 0 ? (
+            <LoaderBig title="Retrieving posts and comments" />
+          ) : (
+            <Tabs.Root
+              value={tab}
+              onValueChange={handleTabChange}
+              className="tabs-root"
+            >
+              <Tabs.List className="flex gap-6 border-b mb-6">
+                <Tabs.Trigger
+                  value="posts"
+                  className={`border-b-4  py-4 font-medium transition-all ${
+                    tab === "posts"
+                      ? " border-black text-black"
+                      : " border-transparent text-gray-600"
+                  }`}
+                >
+                  Posts
+                </Tabs.Trigger>
 
-              <Tabs.Trigger
-                value="answers"
-                className={`border-b-4  py-4 font-medium  transition-all ${
-                  tab === "answers"
-                    ? " border-black text-black"
-                    : "border-transparent text-gray-600"
-                }`}
-              >
-                Answers
-              </Tabs.Trigger>
+                <Tabs.Trigger
+                  value="answers"
+                  className={`border-b-4  py-4 font-medium  transition-all ${
+                    tab === "answers"
+                      ? " border-black text-black"
+                      : "border-transparent text-gray-600"
+                  }`}
+                >
+                  Answers
+                </Tabs.Trigger>
 
-              <Tabs.Trigger
-                value="patterns"
-                className={`border-b-4  py-4 font-medium  transition-all ${
-                  tab === "patterns"
-                    ? " border-black text-black"
-                    : "border-transparent text-gray-600"
-                }`}
-              >
-                Patterns
-              </Tabs.Trigger>
-            </Tabs.List>
-            <Tabs.Content value="posts">
-              {posts ? (
-                <PostsList posts={posts} collectionId={id} />
-              ) : (
-                <LoaderBig title="" />
-              )}
-            </Tabs.Content>
-            <Tabs.Content value="patterns">
-              <PatternsList collectionId={id} />
-            </Tabs.Content>
-            <Tabs.Content value="answers" className="answers-content">
-              <Answers collectionId={id} />
-            </Tabs.Content>
-          </Tabs.Root>
+                <Tabs.Trigger
+                  value="patterns"
+                  className={`border-b-4  py-4 font-medium  transition-all ${
+                    tab === "patterns"
+                      ? " border-black text-black"
+                      : "border-transparent text-gray-600"
+                  }`}
+                >
+                  Patterns
+                </Tabs.Trigger>
+              </Tabs.List>
+              <Tabs.Content value="posts">
+                {posts ? (
+                  <PostsList posts={posts} collectionId={id} />
+                ) : (
+                  <LoaderBig title="" />
+                )}
+              </Tabs.Content>
+              <Tabs.Content value="patterns">
+                <PatternsList collectionId={id} />
+              </Tabs.Content>
+              <Tabs.Content value="answers" className="answers-content">
+                <Answers collectionId={id} />
+              </Tabs.Content>
+            </Tabs.Root>
+          )}
         </div>
       )}
 
@@ -372,11 +381,14 @@ export default CollectionPage;
   'ANALYSIS_ERROR'
 */
 
-function UpdateWidget({ collectionStatus, onClick, isLoading, subreddits }) {
-  if (
-    collectionStatus !== "FETCHING_POSTS" &&
-    collectionStatus !== "ANALYZING_POSTS"
-  ) {
+function UpdateWidget({
+  collectionStatus,
+  onClick,
+  isLoading,
+  subreddits,
+  isUpadating,
+}) {
+  if (!isUpadating) {
     return (
       <Button
         variant="outline"
