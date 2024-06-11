@@ -32,17 +32,12 @@ const PostsList = ({ posts, collectionId }) => {
   );
 
   const handleSearch = (query) => {
-    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, "$&");
-    setSearchQuery(escapedQuery);
+    setSearchQuery(query);
   };
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
   };
-
-  function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  }
 
   const filteredPosts = selectedCategory
     ? posts.filter((post) => post.categories.includes(selectedCategory))
