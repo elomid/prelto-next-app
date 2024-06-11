@@ -11,8 +11,6 @@ import { Label } from "@/components/ui/label";
 export default function SettingsPage() {
   const { user, isLoading, isError } = useUser();
 
-  console.log({ user });
-
   const router = useRouter();
   async function handleManageSubscription() {
     try {
