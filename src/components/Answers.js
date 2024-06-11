@@ -6,6 +6,8 @@ import { fetchResponse } from "@/utils/fetchUtils";
 
 import styles from "./Answers.module.css";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { IconCreditWhite } from "./icon";
+import Loader from "@/components/ui/Loader";
 
 function Answers({ collectionId }) {
   const [question, setQuestion] = useState("");
@@ -16,9 +18,15 @@ function Answers({ collectionId }) {
 
   const handleAskQuestion = async (e) => {
     e.preventDefault();
+
+    const trimmedQuestion = question.trim();
+    if (!trimmedQuestion) {
+      return;
+    }
+
     setMessages((prevMessages) => [
       ...prevMessages,
-      { type: "question", content: question },
+      { type: "question", content: trimmedQuestion },
     ]);
 
     setError(null);
@@ -30,7 +38,7 @@ function Answers({ collectionId }) {
         method: "POST",
         url: `/api/collections/${collectionId}/answer`,
         isProtected: true,
-        body: { query: question },
+        body: { query: trimmedQuestion },
       });
 
       setMessages((prevMessages) => [
@@ -57,7 +65,7 @@ function Answers({ collectionId }) {
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`border rounded-lg p-8 text-sm  ${
+            className={`border rounded-2xl p-8 text-sm  ${
               message.type == "question"
                 ? " font-regular bg-gray-900 text-white"
                 : "bg-white text-gray-700"
@@ -77,15 +85,23 @@ function Answers({ collectionId }) {
             placeholder="Type your question here"
             className="rounded-full p-6"
           />
+
           <Button
+            className="flex items-center gap-2"
             onClick={handleAskQuestion}
-            size="lg"
-            className="p-6 flex items-center justify-center gap-2"
             disabled={loading}
+            style={{ width: "160px", height: "48px" }}
           >
-            {loading ? "Loading..." : "Send"}
+            {loading ? (
+              <Loader trackColor="#eaeaef80" spinnerColor="white" />
+            ) : (
+              `Submit`
+            )}
             {!loading && (
-              <div className="text-xs text-white/60  mt-[1px]">10</div>
+              <div className="flex items-center gap-0.5 text-xs text-white/70">
+                <div className="mt-[0.7px]">10</div>
+                <IconCreditWhite />
+              </div>
             )}
           </Button>
         </div>

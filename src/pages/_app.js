@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import mixpanel from "../lib/mixpanel";
+import { initFullStory } from "../lib/fullstory";
 
 import "@/styles/globals.css";
 import { Inter } from "next/font/google";
@@ -12,7 +13,9 @@ export default function App({ Component, pageProps }) {
 
   useEffect(() => {
     const handleRouteChange = (url) => {
-      mixpanel.track("Page Viewed", { url });
+      if (process.env.NEXT_PUBLIC_ENV !== "local") {
+        mixpanel.track("Page Viewed", { url });
+      }
     };
 
     router.events.on("routeChangeComplete", handleRouteChange);
@@ -20,6 +23,12 @@ export default function App({ Component, pageProps }) {
     return () => {
       router.events.off("routeChangeComplete", handleRouteChange);
     };
+  }, []);
+
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_ENV !== "local") {
+      initFullStory();
+    }
   }, []);
   return (
     <div className={inter.className}>

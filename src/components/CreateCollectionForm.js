@@ -9,6 +9,8 @@ import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { IconCreditWhite } from "./icon";
+import actionCosts from "@/constants/actionCosts";
 
 const CreateCollectionForm = () => {
   const [collectionName, setProjectName] = useState("");
@@ -67,14 +69,23 @@ const CreateCollectionForm = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to create collection");
+        let errorMessage = "Failed to create collection";
+        try {
+          const errorData = await response.json();
+          if (errorData && errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch (jsonError) {
+          console.error("Error parsing server response:", jsonError);
+        }
+        throw new Error(errorMessage);
       }
 
       const collection = await response.json();
       router.push(`/collections/${collection.id}`);
     } catch (error) {
       console.error("Error creating collection:", error);
-      setCreationError("Failed to create collection");
+      setCreationError(error.message);
     } finally {
       setIsCreating(false);
     }
@@ -150,11 +161,19 @@ const CreateCollectionForm = () => {
           </Link>
 
           <Button
-            type="button"
+            className="flex items-center gap-2"
             onClick={handleCreateNewCollection}
             disabled={isCreating}
           >
-            {isCreating ? "Creating..." : "Create"}
+            {isCreating ? "Creating..." : `Create collection`}
+            {!isCreating && (
+              <div className="flex items-center gap-0.5 text-xs text-white/70">
+                <div className="mt-[0.7px]">
+                  {subreddits.length * actionCosts.UPDATE_COLLECTION}
+                </div>
+                <IconCreditWhite />
+              </div>
+            )}
           </Button>
         </div>
       </Card>

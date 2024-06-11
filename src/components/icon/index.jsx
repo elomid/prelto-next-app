@@ -7,6 +7,8 @@ import ExternalLink from "@/components/icon/svg/externalLink.svg";
 import CheckFilled from "@/components/icon/svg/checkFilled.svg";
 import LogoWithName from "@/components/icon/svg/logo-with-name.svg";
 import GoogleLogo from "@/components/icon/svg/google-logo.svg";
+import CreditGray from "@/components/icon/svg/credit-gray.svg";
+import CreditWhite from "@/components/icon/svg/credit-white.svg";
 
 const SvgWrapper = (SvgComponent) => {
   const MemoizedSvgComponent = React.memo(
@@ -30,3 +32,5 @@ export const IconExternalLink = SvgWrapper(ExternalLink);
 export const IconCheckFilled = SvgWrapper(CheckFilled);
 export const IconLogoWithName = SvgWrapper(LogoWithName);
 export const IconGoogleLogo = SvgWrapper(GoogleLogo);
+export const IconCreditGray = SvgWrapper(CreditGray);
+export const IconCreditWhite = SvgWrapper(CreditWhite);

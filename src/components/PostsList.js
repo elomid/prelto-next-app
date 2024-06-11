@@ -112,7 +112,9 @@ const PostsList = ({ posts, collectionId }) => {
             displayedPosts.length > 0 &&
             displayedPosts.map((post) => (
               <li key={post.id}>
-                <Link href={`/collections/${collectionId}/posts/${post.id}`}>
+                <Link
+                  href={`/collections/${collectionId}/posts/${post.reddit_name}`}
+                >
                   <Card className="flex flex-col overflow-hidden p-6 cursor-pointer gap-3 bg-white hover:bg-gray-50">
                     <h3 className="font-medium text-sm">
                       <Highlighter
@@ -145,7 +147,7 @@ const PostsList = ({ posts, collectionId }) => {
                       </div>
                       <div className="text-xs text-gray-500">
                         {formatDate(post.original_created_at)} • {post.ups}{" "}
-                        votes
+                        votes • {post.comments_count} comments
                       </div>
                     </div>
                   </Card>
@@ -165,7 +167,7 @@ const PostsList = ({ posts, collectionId }) => {
             displayedComments.map((comment) => (
               <li key={comment.id}>
                 <Link
-                  href={`/collections/${collectionId}/posts/${comment.post_id}`}
+                  href={`/collections/${collectionId}/posts/${comment.post_reddit_name}`}
                 >
                   <Card className="flex flex-col overflow-hidden gap-3">
                     <div className="p-6 py-4 font-medium text-xs bg-slate-100">

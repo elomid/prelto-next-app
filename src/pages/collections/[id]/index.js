@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+import { formatDateToNow } from "@/utils/dateUtils";
 import fetcher from "@/utils/fetcher";
 import PostsList from "@/components/PostsList";
 import Answers from "@/components/Answers";
 import PatternsList from "@/components/PatternsList";
 import CollectionLayout from "@/components/CollectionLayout";
-import Loader from "@/components/Loader";
+import Loader from "@/components/ui/Loader";
+import actionCosts from "@/constants/actionCosts";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -37,6 +39,9 @@ import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { fetchResponse } from "@/utils/fetchUtils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import useRequireAuth from "@/hooks/useRequireAuth";
+import { IconCreditGray } from "@/components/icon";
+import LoaderBig from "@/components/LoaderBig";
+import { Badge } from "@/components/ui/badge";
 
 const CollectionPage = () => {
   const { user, isLoading, isError } = useRequireAuth();
@@ -60,6 +65,8 @@ const CollectionPage = () => {
   const [newCollectionName, setNewCollectionName] = useState(collection?.name);
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameError, setRenameError] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [updateError, setUpdateError] = useState(null);
 
   const { data: posts, error: postsError } = useSWR(
     id ? `/api/collections/${id}/posts` : null,
@@ -71,16 +78,16 @@ const CollectionPage = () => {
     if (collection) {
       switch (collection.status) {
         case "DRAFT":
-          setRevalidateInterval(5000);
+          setRevalidateInterval(6000);
           break;
         case "FETCHING_POSTS":
-          setRevalidateInterval(5000);
+          setRevalidateInterval(6000);
           break;
         case "POSTS_FETCHED":
-          setRevalidateInterval(5000);
+          setRevalidateInterval(6000);
           break;
         case "ANALYZING_POSTS":
-          setRevalidateInterval(5000);
+          setRevalidateInterval(6000);
           break;
         case "ANALYSIS_COMPLETED":
           setRevalidateInterval(0);
@@ -134,6 +141,22 @@ const CollectionPage = () => {
     mutateCollection();
   };
 
+  const handleUpdate = async () => {
+    setIsUpdating(true);
+    setUpdateError(null);
+    try {
+      await fetchResponse({
+        method: "GET",
+        url: `/api/collections/${id}/update`,
+      });
+    } catch (error) {
+      console.error("Error:", error.message);
+      setUpdateError(error.message);
+    }
+    setIsUpdating(false);
+    mutateCollection();
+  };
+
   return (
     <CollectionLayout>
       {collectionError || postsError ? (
@@ -142,7 +165,7 @@ const CollectionPage = () => {
         <div>Loading...</div>
       ) : (
         <div className="some-container">
-          <div className="flex flex-col gap-1 mb-8">
+          <div className="flex flex-col gap-1">
             <Breadcrumb className="mb-2">
               <BreadcrumbList>
                 <BreadcrumbItem>
@@ -160,6 +183,7 @@ const CollectionPage = () => {
               <h1 className="text-3xl font-medium tracking-tight">
                 {collection.name}
               </h1>
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild className="">
                   <Button variant="outline" className="text-xs">
@@ -182,17 +206,46 @@ const CollectionPage = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+
+            <div className="mt-2 flex gap-2">
+              {collection.subreddits &&
+                collection.subreddits.map((subreddit, index) => (
+                  <Badge
+                    key={index}
+                    className="bg-gray-200 hover:bg-gray-200 cursor-default"
+                  >
+                    {subreddit}
+                  </Badge>
+                ))}
+            </div>
+
+            <div className="flex flex-col gap-2 my-4">
+              <p className="text-xs text-gray-700">
+                {collection.posts_count && collection.posts_count} posts •
+                Updated {formatDateToNow(collection.updated_at)}{" "}
+              </p>
+
+              <UpdateWidget
+                onClick={handleUpdate}
+                isLoading={isUpdating}
+                collectionStatus={collection.status}
+                subreddits={collection.subreddits}
+              />
+            </div>
+
             {renameError && (
               <Alert variant="destructive" className="mt-6">
                 <AlertTitle>Something went wrong</AlertTitle>
                 <AlertDescription>Please try again</AlertDescription>
               </Alert>
             )}
-          </div>
-          {collection.status != "POSTS_FETCHED" &&
-            collection.status != "ANALYSIS_COMPLETED" && (
-              <CollectionStatus status={collection.status} />
+            {updateError && (
+              <Alert variant="destructive" className="mt-6">
+                <AlertTitle>Failed to update collection</AlertTitle>
+                <AlertDescription>{updateError}</AlertDescription>
+              </Alert>
             )}
+          </div>
           <Tabs.Root
             value={tab}
             onValueChange={handleTabChange}
@@ -209,16 +262,7 @@ const CollectionPage = () => {
               >
                 Posts
               </Tabs.Trigger>
-              <Tabs.Trigger
-                value="patterns"
-                className={`border-b-4  py-4 font-medium  transition-all ${
-                  tab === "patterns"
-                    ? " border-black text-black"
-                    : "border-transparent text-gray-600"
-                }`}
-              >
-                Patterns
-              </Tabs.Trigger>
+
               <Tabs.Trigger
                 value="answers"
                 className={`border-b-4  py-4 font-medium  transition-all ${
@@ -229,12 +273,23 @@ const CollectionPage = () => {
               >
                 Answers
               </Tabs.Trigger>
+
+              <Tabs.Trigger
+                value="patterns"
+                className={`border-b-4  py-4 font-medium  transition-all ${
+                  tab === "patterns"
+                    ? " border-black text-black"
+                    : "border-transparent text-gray-600"
+                }`}
+              >
+                Patterns
+              </Tabs.Trigger>
             </Tabs.List>
             <Tabs.Content value="posts">
               {posts ? (
                 <PostsList posts={posts} collectionId={id} />
               ) : (
-                <div>Loading posts...</div>
+                <LoaderBig title="" />
               )}
             </Tabs.Content>
             <Tabs.Content value="patterns">
@@ -317,55 +372,36 @@ export default CollectionPage;
   'ANALYSIS_ERROR'
 */
 
-function CollectionStatus({ status }) {
-  const messages = {
-    DRAFT: {
-      title: "Connecting to Reddit",
-      variant: "info",
-      message: "Establishing a connection to Reddit...",
-    },
-    FETCHING_POSTS: {
-      title: "Retrieving content from Reddit",
-      variant: "info",
-      message: "Posts and comments are being retrieved from Reddit.",
-    },
-    FETCH_ERROR: {
-      title: "Unable to retrieve posts",
-      variant: "destructive",
-      message:
-        "There was a problem retrieving posts from Reddit. A retry will happen in a few minutes. If the problem persists, please reach out to support.",
-    },
-    POSTS_FETCHED: {
-      title: "Posts retrieved successfully",
-      variant: "default",
-      message: "Posts have been successfully retrieved from Reddit.",
-    },
-    ANALYZING_POSTS: {
-      title: "Analyzing posts and comments",
-      variant: "info",
-      message:
-        "Posts and comments are being analyzed. Some features may not be functional during this process.",
-    },
-    ANALYSIS_ERROR: {
-      title: "Unable to analyze posts",
-      variant: "destructive",
-      message:
-        "There was a problem analyzing the posts. Please try again or contact support if the problem persists.",
-    },
-    ANALYSIS_COMPLETED: {
-      title: "Analysis complete",
-      variant: "info",
-      message: "The analysis of posts and comments is complete.",
-    },
-  };
-
-  if (!messages[status]) {
-    return;
+function UpdateWidget({ collectionStatus, onClick, isLoading, subreddits }) {
+  if (
+    collectionStatus !== "FETCHING_POSTS" &&
+    collectionStatus !== "ANALYZING_POSTS"
+  ) {
+    return (
+      <Button
+        variant="outline"
+        size="sm"
+        className="mr-auto text-xs flex items-center gap-2 px-4"
+        onClick={onClick}
+        disabled={isLoading}
+      >
+        {isLoading ? "Updating collection..." : `Get latest posts`}
+        {!isLoading && (
+          <div className="flex items-center gap-0.5 text-xs text-black/50">
+            <div className="mt-[0.8px]">
+              {actionCosts.UPDATE_COLLECTION * subreddits.length}
+            </div>
+            <IconCreditGray />
+          </div>
+        )}
+      </Button>
+    );
+  } else {
+    return (
+      <div className="rounded-full text-xs px-4 py-2.5 bg-[#e0e8e8] font-medium flex gap-2 mr-auto text-black/70 items-center justify-center">
+        <Loader speed="2s" trackColor="#aaa" spinnerColor="black" />
+        Update in progress{" "}
+      </div>
+    );
   }
-  return (
-    <Alert variant={messages[status].variant} className="my-6">
-      <AlertTitle>{messages[status].title}</AlertTitle>
-      <AlertDescription>{messages[status].message}</AlertDescription>
-    </Alert>
-  );
 }

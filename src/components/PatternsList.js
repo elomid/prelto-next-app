@@ -8,6 +8,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import PatternDetailsSheet from "./PatternDetailsSheet";
 import { fetchResponse } from "@/utils/fetchUtils";
+import { IconCreditWhite } from "./icon";
+import LoaderBig from "@/components/LoaderBig";
 
 function PatternsList({ collectionId }) {
   const [isCalculatingPatterns, setIsCalculatingPatterns] = useState(false);
@@ -15,6 +17,7 @@ function PatternsList({ collectionId }) {
   const {
     data: patterns,
     error,
+    isLoading,
     mutate,
   } = useSWR(`/api/collections/${collectionId}/patterns`, fetcher);
 
@@ -44,29 +47,29 @@ function PatternsList({ collectionId }) {
   }
 
   if (error) return <div>Failed to load patterns.</div>;
-  if (!patterns) return <div>Loading patterns...</div>;
+  if (isLoading) return <LoaderBig title="" text="" />;
   if (isCalculatingPatterns)
     return (
-      <div>
-        Calculating patterns. This can take up to a few minutes. You can
-        navigate away, and come back later to see the results.
-      </div>
+      <LoaderBig
+        title={"Analyzing patterns"}
+        text="This could take up to a couple of minutes."
+      />
     );
 
   return (
     <div className="flex flex-col gap-6 min-w-0 w-full">
       {calculationError && (
         <Alert variant="destructive">
-          <AlertTitle>Failed to calculate patterns</AlertTitle>
+          <AlertTitle>Failed to generate patterns</AlertTitle>
           <AlertDescription>{calculationError}</AlertDescription>
         </Alert>
       )}
-      <div className="flex gap-6">
+      <div className="flex gap-6 w-full">
         <aside className="min-w-[240px] max-w-[240px] text-sm">
           <div className="flex flex-col gap-6">
             {patterns && patterns.length > 0 && (
               <div className="flex flex-col gap-1">
-                <Label>Calculated on</Label>
+                <Label>Generated on</Label>
                 <div className="text-gray-700">
                   {new Date(patterns[0].created_at).toLocaleDateString(
                     "en-US",
@@ -84,29 +87,33 @@ function PatternsList({ collectionId }) {
               <div className="text-gray-700">{patterns.length}</div>
             </div>
             <Button
-              className="mr-auto flex items-center gap-2"
+              size="sm"
+              className="mr-auto text-xs flex items-center gap-2 px-4"
               onClick={handleRecalculatePatterns}
             >
-              {isCalculatingPatterns ? "Calculating..." : `Calculate patterns`}
+              {isCalculatingPatterns ? "Finding patterns..." : `Find patterns`}
               {!isCalculatingPatterns && (
-                <div className="text-xs text-white/60 mt-[1.5px]">100</div>
+                <div className="flex items-center gap-0.5 text-xs text-white/70">
+                  <div className="mt-[0.7px]">100</div>
+                  <IconCreditWhite />
+                </div>
               )}
             </Button>
           </div>
         </aside>
-        <ul className="flex flex-col gap-3">
+        <ul className="flex flex-col gap-3 w-full">
           {patterns.map((pattern) => (
-            <li key={pattern.id}>
+            <li key={pattern.id} className="w-full">
               <Sheet>
                 <SheetTrigger asChild>
-                  <Card className="flex flex-col overflow-hidden p-6 cursor-pointer gap-6">
+                  <Card className="flex flex-col overflow-hidden p-6 cursor-pointer gap-3 w-full">
                     <div className="flex gap-2 items-center">
-                      <CommentCount count={pattern.total_count} />
                       <h3 className="text-sm font-medium">{pattern.title}</h3>
                     </div>
-                    <p className="text-sm overflow-ellipsis overflow-hidden text-gray-700">
-                      {pattern.summary}
-                    </p>
+                    <div className="text-xs text-[#017E76] font-semibold rounded-full px-2 py-1 bg-[#EEFBFA] flex justify-center items-center mr-auto">
+                      {pattern.total_count}{" "}
+                      {pattern.total_count === 1 ? "item" : "items"}
+                    </div>
                   </Card>
                 </SheetTrigger>
                 <PatternDetailsSheet pattern={pattern} />
