@@ -32,12 +32,17 @@ const PostsList = ({ posts, collectionId }) => {
   );
 
   const handleSearch = (query) => {
-    setSearchQuery(query);
+    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, "$&");
+    setSearchQuery(escapedQuery);
   };
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
   };
+
+  function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
 
   const filteredPosts = selectedCategory
     ? posts.filter((post) => post.categories.includes(selectedCategory))
@@ -117,18 +122,20 @@ const PostsList = ({ posts, collectionId }) => {
                 >
                   <Card className="flex flex-col overflow-hidden p-6 cursor-pointer gap-3 bg-white hover:bg-gray-50">
                     <h3 className="font-medium text-sm">
-                      <Highlighter
-                        searchWords={searchQuery.replace(/"/g, "").split(" ")}
+                      {/* <Highlighter
+                        searchWords={escapeRegExp(searchQuery).split(" ")}
                         textToHighlight={post.title}
                         highlightClassName="bg-[#a0f8f3]"
-                      />
+                      /> */}
+                      {post.title}
                     </h3>
                     <p className="text-sm text-gray-700 no-wrap overflow-ellipsis whitespace-nowrap overflow-hidden">
-                      <Highlighter
-                        searchWords={searchQuery.replace(/"/g, "").split(" ")}
+                      {/* <Highlighter
+                        searchWords={escapeRegExp(searchQuery).split(" ")}
                         textToHighlight={post.content}
                         highlightClassName="bg-[#a0f8f3]"
-                      />
+                      /> */}
+                      {post.content}
                     </p>
                     <div className="flex text-xs items-centers justify-between">
                       <div className="flex gap-1">
@@ -175,11 +182,12 @@ const PostsList = ({ posts, collectionId }) => {
                     </div>
                     <div className="p-6 pt-3">
                       <p className="text-sm text-gray-700">
-                        <Highlighter
+                        {/* <Highlighter
                           searchWords={searchQuery.replace(/"/g, "").split(" ")}
                           textToHighlight={comment.content}
                           highlightClassName="bg-[#a0f8f3]"
-                        />
+                        /> */}
+                        {comment.content}
                       </p>
                     </div>
                   </Card>
