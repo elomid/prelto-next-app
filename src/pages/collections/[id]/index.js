@@ -252,7 +252,10 @@ const CollectionPage = () => {
             )}
           </div>
           {isBackgroundTaskUpdating && posts?.length === 0 ? (
-            <LoaderBig title="Retrieving posts and comments" />
+            <LoaderBig
+              title="Retrieving posts and comments"
+              text="Initial retrieval could take a few minutes."
+            />
           ) : (
             <Tabs.Root
               value={tab}
