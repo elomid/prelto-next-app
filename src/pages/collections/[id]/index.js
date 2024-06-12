@@ -157,9 +157,7 @@ const CollectionPage = () => {
     mutateCollection();
   };
 
-  const isBackgroundTaskUpdating =
-    collection?.status === "FETCHING_POSTS" ||
-    collection?.status === "ANALYZING_POSTS";
+  const isBackgroundTaskUpdating = collection?.status === "FETCHING_POSTS";
 
   return (
     <CollectionLayout>
