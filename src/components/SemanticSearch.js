@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Markdown from "markdown-to-jsx";
@@ -14,10 +14,19 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Loader from "@/components/ui/Loader";
 
 function SemanticSearch({ collectionId }) {
-  const [question, setQuestion] = useState("");
+  const [question, setQuestion] = useState(() => {
+    return localStorage.getItem("question") || "";
+  });
+  const [results, setResults] = useState(() => {
+    return JSON.parse(localStorage.getItem("results")) || [];
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [results, setResults] = useState([]);
+
+  useEffect(() => {
+    localStorage.setItem("question", question);
+    localStorage.setItem("results", JSON.stringify(results));
+  }, [question, results]);
 
   const handleSubmitSemanticSearch = async (e) => {
     e.preventDefault();
@@ -29,6 +38,7 @@ function SemanticSearch({ collectionId }) {
 
     setError(null);
     setLoading(true);
+    setResults([]);
 
     try {
       const data = await fetchResponse({
@@ -37,6 +47,8 @@ function SemanticSearch({ collectionId }) {
         isProtected: true,
         body: { query: trimmedQuestion },
       });
+      localStorage.removeItem("question");
+      localStorage.removeItem("results");
       setResults(data);
     } catch (error) {
       console.error("Error:", error.message);
@@ -86,6 +98,8 @@ function SemanticSearch({ collectionId }) {
             onClick={() => {
               setQuestion("");
               setResults([]);
+              localStorage.removeItem("question");
+              localStorage.removeItem("results");
             }}
           >
             <Cross2Icon className="" />
@@ -96,10 +110,20 @@ function SemanticSearch({ collectionId }) {
       <ul className="flex flex-col gap-3">
         {results.map((result) => {
           if (result.type === "post") {
-            return <PostListItem post={result} collectionId={collectionId} />;
+            return (
+              <PostListItem
+                post={result}
+                collectionId={collectionId}
+                key={result.id}
+              />
+            );
           } else if (result.type === "comment") {
             return (
-              <CommentListItem comment={result} collectionId={collectionId} />
+              <CommentListItem
+                comment={result}
+                collectionId={collectionId}
+                key={result.id}
+              />
             );
           } else {
             return null;
