@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Markdown from "markdown-to-jsx";
 import { fetchResponse } from "@/utils/fetchUtils";
+import { Cross2Icon } from "@radix-ui/react-icons";
 
 import styles from "./Answers.module.css";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -10,11 +11,20 @@ import { IconCreditWhite } from "./icon";
 import Loader from "@/components/ui/Loader";
 
 function Answers({ collectionId }) {
-  const [question, setQuestion] = useState("");
+  const [question, setQuestion] = useState(() => {
+    return localStorage.getItem("question") || "";
+  });
+  const [messages, setMessages] = useState(() => {
+    return JSON.parse(localStorage.getItem("messages")) || [];
+  });
   const [answer, setAnswer] = useState([]);
-  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    localStorage.setItem("question", question);
+    localStorage.setItem("messages", JSON.stringify(messages));
+  }, [question, messages]);
 
   const handleAskQuestion = async (e) => {
     e.preventDefault();
@@ -104,6 +114,21 @@ function Answers({ collectionId }) {
               </div>
             )}
           </Button>
+          {messages?.length > 1 && (
+            <Button
+              variant="outline"
+              size="icon"
+              className="w-[56px] h-[48px] rounded-full"
+              onClick={() => {
+                setQuestion("");
+                setMessages([]);
+                localStorage.removeItem("question");
+                localStorage.removeItem("results");
+              }}
+            >
+              <Cross2Icon className="" />
+            </Button>
+          )}
         </div>
       </div>
     </div>
