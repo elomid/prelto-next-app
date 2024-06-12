@@ -50,45 +50,6 @@ const PostsList = ({ posts, collectionId }) => {
 
   return (
     <div className="flex gap-6">
-      <aside className="min-w-[240px] text-sm">
-        <ul className="flex flex-col gap-1">
-          {[
-            {
-              label: "All posts",
-              value: null,
-            },
-            {
-              label: "Pain points",
-              value: "Pain point",
-            },
-            {
-              label: "Solution requests",
-              value: "Solution request",
-            },
-            {
-              label: "Habits and preferences",
-              value: "Habits and preferences",
-            },
-            {
-              label: "Product feedback",
-              value: "Product feedback",
-            },
-          ].map(({ label, value }) => (
-            <li key={label}>
-              <button
-                className={`flex w-full h-full justify-between items-center px-4 py-3 rounded-full transition-al ${
-                  selectedCategory === value
-                    ? "bg-[#000] text-white"
-                    : "text-gray-700 hover:bg-[#F0F4F4]"
-                }`}
-                onClick={() => handleCategoryClick(value)}
-              >
-                {label}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </aside>
       <div className="flex flex-col gap-6 min-w-0 w-full">
         <div>
           <Input
