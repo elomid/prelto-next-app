@@ -5,6 +5,7 @@ import { formatDateToNow } from "@/utils/dateUtils";
 import fetcher from "@/utils/fetcher";
 import PostsList from "@/components/PostsList";
 import Answers from "@/components/Answers";
+import SemanticSearch from "@/components/SemanticSearch";
 import PatternsList from "@/components/PatternsList";
 import CollectionLayout from "@/components/CollectionLayout";
 import Loader from "@/components/ui/Loader";
@@ -273,6 +274,17 @@ const CollectionPage = () => {
                 </Tabs.Trigger>
 
                 <Tabs.Trigger
+                  value="semantic"
+                  className={`border-b-4  py-4 font-medium  transition-all ${
+                    tab === "semantic"
+                      ? " border-black text-black"
+                      : "border-transparent text-gray-600"
+                  }`}
+                >
+                  Semantic search
+                </Tabs.Trigger>
+
+                <Tabs.Trigger
                   value="answers"
                   className={`border-b-4  py-4 font-medium  transition-all ${
                     tab === "answers"
@@ -306,6 +318,9 @@ const CollectionPage = () => {
               </Tabs.Content>
               <Tabs.Content value="answers" className="answers-content">
                 <Answers collectionId={id} />
+              </Tabs.Content>
+              <Tabs.Content value="semantic">
+                <SemanticSearch collectionId={id} />
               </Tabs.Content>
             </Tabs.Root>
           )}

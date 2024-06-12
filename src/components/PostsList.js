@@ -55,7 +55,7 @@ const PostsList = ({ posts, collectionId }) => {
           <Input
             type="text"
             placeholder="Search posts and comments"
-            className="rounded-full px-6"
+            className="rounded-full p-6"
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
           />
@@ -96,17 +96,6 @@ const PostsList = ({ posts, collectionId }) => {
                     <div className="flex text-xs items-centers justify-between">
                       <div className="flex gap-1">
                         <Badge className="text-xs">{post.subreddit}</Badge>
-                        {post.categories &&
-                          post.categories.length > 0 &&
-                          post.categories.map((category) => (
-                            <Badge
-                              key={category}
-                              variant="outline"
-                              className="text-xs"
-                            >
-                              {category}
-                            </Badge>
-                          ))}
                       </div>
                       <div className="text-xs text-gray-500">
                         {formatDate(post.original_created_at)} • {post.ups}{" "}
@@ -137,14 +126,7 @@ const PostsList = ({ posts, collectionId }) => {
                       {comment && comment.title && comment.title}
                     </div>
                     <div className="p-6 pt-3">
-                      <p className="text-sm text-gray-700">
-                        {/* <Highlighter
-                          searchWords={searchQuery.replace(/"/g, "").split(" ")}
-                          textToHighlight={comment.content}
-                          highlightClassName="bg-[#a0f8f3]"
-                        /> */}
-                        {comment.content}
-                      </p>
+                      <p className="text-sm text-gray-700">{comment.content}</p>
                     </div>
                   </Card>
                 </Link>
