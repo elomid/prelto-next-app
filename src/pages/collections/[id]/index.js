@@ -413,7 +413,7 @@ function UpdateWidget({
     return (
       <div className="rounded-full text-xs px-4 py-2.5 bg-[#e0e8e8] font-medium flex gap-2 mr-auto text-black/70 items-center justify-center">
         <Loader speed="2s" trackColor="#aaa" spinnerColor="black" />
-        Update in progress{" "}
+        Retreving latest posts
       </div>
     );
   }
