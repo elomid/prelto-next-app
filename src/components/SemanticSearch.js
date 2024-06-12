@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Badge } from "./ui/badge";
 import { formatDate } from "@/utils/dateUtils";
+import { Cross2Icon } from "@radix-ui/react-icons";
 
 import styles from "./Answers.module.css";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -62,7 +63,7 @@ function SemanticSearch({ collectionId }) {
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           placeholder="e.g. users talking about their furstrations with software..."
-          className="rounded-full p-6"
+          className="rounded-full p-6 relative"
         />
 
         <Button
@@ -77,6 +78,19 @@ function SemanticSearch({ collectionId }) {
             `Search`
           )}
         </Button>
+        {results?.length > 0 && (
+          <Button
+            variant="outline"
+            size="icon"
+            className="w-[56px] h-[48px] rounded-full"
+            onClick={() => {
+              setQuestion("");
+              setResults([]);
+            }}
+          >
+            <Cross2Icon className="" />
+          </Button>
+        )}
       </form>
 
       <ul className="flex flex-col gap-3">
