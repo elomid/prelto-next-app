@@ -10,10 +10,12 @@ import PatternDetailsSheet from "./PatternDetailsSheet";
 import { fetchResponse } from "@/utils/fetchUtils";
 import { IconCreditWhite } from "./icon";
 import LoaderBig from "@/components/LoaderBig";
+import { Input } from "./ui/input";
 
 function PatternsList({ collectionId }) {
   const [isCalculatingPatterns, setIsCalculatingPatterns] = useState(false);
   const [calculationError, setCalculationError] = useState(null);
+  const [keywords, setKeywords] = useState("");
   const {
     data: patterns,
     error,
@@ -25,11 +27,17 @@ function PatternsList({ collectionId }) {
     setIsCalculatingPatterns(true);
     setCalculationError(null);
 
+    const keywordsArray = keywords
+      .split(",")
+      .map((keyword) => keyword.trim())
+      .filter(Boolean);
+
     try {
       await fetchResponse({
         method: "POST",
         url: `/api/collections/${collectionId}/calculate-patterns`,
         isProtected: true,
+        body: { keywords: keywordsArray },
       });
       mutate();
     } catch (error) {
@@ -99,6 +107,15 @@ function PatternsList({ collectionId }) {
                 </div>
               )}
             </Button>
+            <div className="grid gap-1.5">
+              <Label htmlFor="patternKeywords">Filter by keywords</Label>
+              <Input
+                id="patternKeywords"
+                value={keywords}
+                placeholder="Comma separated keywords"
+                onChange={(e) => setKeywords(e.target.value)}
+              />
+            </div>
           </div>
         </aside>
         <ul className="flex flex-col gap-3 w-full">
