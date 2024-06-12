@@ -107,7 +107,7 @@ function PatternsList({ collectionId }) {
                 </div>
               )}
             </Button>
-            <div className="grid gap-1.5">
+            {/* <div className="grid gap-1.5">
               <Label htmlFor="patternKeywords">Filter by keywords</Label>
               <Input
                 id="patternKeywords"
@@ -115,7 +115,7 @@ function PatternsList({ collectionId }) {
                 placeholder="Comma separated keywords"
                 onChange={(e) => setKeywords(e.target.value)}
               />
-            </div>
+            </div> */}
           </div>
         </aside>
         <ul className="flex flex-col gap-3 w-full">
