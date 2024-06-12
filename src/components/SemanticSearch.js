@@ -14,8 +14,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Loader from "@/components/ui/Loader";
 
 function SemanticSearch({ collectionId }) {
-  const [question, setQuestion] = useState(() => {
-    return localStorage.getItem("question") || "";
+  const [description, setDescription] = useState(() => {
+    return localStorage.getItem("description") || "";
   });
   const [results, setResults] = useState(() => {
     return JSON.parse(localStorage.getItem("results")) || [];
@@ -24,15 +24,15 @@ function SemanticSearch({ collectionId }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    localStorage.setItem("question", question);
+    localStorage.setItem("description", description);
     localStorage.setItem("results", JSON.stringify(results));
-  }, [question, results]);
+  }, [description, results]);
 
   const handleSubmitSemanticSearch = async (e) => {
     e.preventDefault();
 
-    const trimmedQuestion = question.trim();
-    if (!trimmedQuestion) {
+    const trimmedDescription = description.trim();
+    if (!trimmedDescription) {
       return;
     }
 
@@ -45,9 +45,9 @@ function SemanticSearch({ collectionId }) {
         method: "POST",
         url: `/api/collections/${collectionId}/semantic-search`,
         isProtected: true,
-        body: { query: trimmedQuestion },
+        body: { query: trimmedDescription },
       });
-      localStorage.removeItem("question");
+      localStorage.removeItem("description");
       localStorage.removeItem("results");
       setResults(data);
     } catch (error) {
@@ -72,8 +72,8 @@ function SemanticSearch({ collectionId }) {
         onSubmit={handleSubmitSemanticSearch}
       >
         <Input
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
           placeholder="e.g. users talking about their furstrations with software..."
           className="rounded-full p-6 relative"
         />
@@ -96,9 +96,9 @@ function SemanticSearch({ collectionId }) {
             size="icon"
             className="w-[56px] h-[48px] rounded-full"
             onClick={() => {
-              setQuestion("");
+              setDescription("");
               setResults([]);
-              localStorage.removeItem("question");
+              localStorage.removeItem("description");
               localStorage.removeItem("results");
             }}
           >
