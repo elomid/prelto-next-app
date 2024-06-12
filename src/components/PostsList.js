@@ -18,11 +18,17 @@ import { Input } from "./ui/input";
 import { IconExternalLink } from "@/components/icon";
 import Highlighter from "react-highlight-words";
 import Link from "next/link";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 const PostsList = ({ posts, collectionId }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [semanticSearchQuery, setSemanticSearchQuery] = useState("");
+  const [isSemanticSearch, setIsSemanticSearch] = useState(false);
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  function handleSubmitSemanticSearch() {}
 
   const { data: searchResults, error } = useSWR(
     debouncedSearchQuery
@@ -33,6 +39,11 @@ const PostsList = ({ posts, collectionId }) => {
 
   const handleSearch = (query) => {
     setSearchQuery(query);
+  };
+
+  const handleSemanticSearch = (query) => {
+    setSearchQuery("");
+    setSemanticSearchQuery(query);
   };
 
   const handleCategoryClick = (category) => {
@@ -90,14 +101,35 @@ const PostsList = ({ posts, collectionId }) => {
         </ul>
       </aside>
       <div className="flex flex-col gap-6 min-w-0 w-full">
-        <div>
-          <Input
-            type="text"
-            placeholder="Search posts and comments"
-            className="rounded-full px-6"
-            value={searchQuery}
-            onChange={(e) => handleSearch(e.target.value)}
-          />
+        <div className="flex gap-2 items-center">
+          {isSemanticSearch ? (
+            <form onSubmit={handleSubmitSemanticSearch} className="w-full">
+              <Input
+                type="text"
+                placeholder="Semantic mode: describe what you're looking for..."
+                className="rounded-full px-6"
+                value={semanticSearchQuery}
+                onChange={(e) => handleSemanticSearch(e.target.value)}
+              />
+            </form>
+          ) : (
+            <Input
+              type="text"
+              placeholder="Search posts and comments"
+              className="rounded-full px-6"
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+            />
+          )}
+          <div className="flex items-center space-x-2 min-w-40">
+            <Switch
+              checked={isSemanticSearch}
+              onCheckedChange={() => setIsSemanticSearch(!isSemanticSearch)}
+            />
+            <Label htmlFor="semantic-search" className="text-xs">
+              Semantic search
+            </Label>
+          </div>
         </div>
         <ul className="flex flex-col gap-3">
           {searchQuery && displayedPosts.length > 0 && (
