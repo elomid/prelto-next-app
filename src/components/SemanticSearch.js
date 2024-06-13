@@ -74,7 +74,7 @@ function SemanticSearch({ collectionId }) {
         <Input
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="e.g. users talking about their furstrations with software..."
+          placeholder="e.g. discussions around paint points of using digital tools..."
           className="rounded-full p-6 relative"
         />
 

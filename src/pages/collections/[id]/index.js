@@ -187,27 +187,36 @@ const CollectionPage = () => {
                 {collection.name}
               </h1>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild className="">
-                  <Button variant="outline" className="text-xs">
-                    Actions <ChevronDownIcon className="ml-2 h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem
-                    disabled={isRenaming}
-                    onSelect={() => setIsRenameDialogOpen(true)}
-                  >
-                    {isRenaming ? "Renaming..." : "Rename"}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    disabled={isDeleting}
-                    onSelect={() => setIsDeleteDialogOpen(true)}
-                  >
-                    {isDeleting ? "Deleting..." : "Delete"}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="flex gap-2">
+                <UpdateWidget
+                  onClick={handleUpdate}
+                  isLoading={isUpdating}
+                  collectionStatus={collection.status}
+                  subreddits={collection.subreddits}
+                  isUpadating={isBackgroundTaskUpdating}
+                />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild className="">
+                    <Button variant="outline" className="text-xs">
+                      Actions <ChevronDownIcon className="ml-2 h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem
+                      disabled={isRenaming}
+                      onSelect={() => setIsRenameDialogOpen(true)}
+                    >
+                      {isRenaming ? "Renaming..." : "Rename"}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      disabled={isDeleting}
+                      onSelect={() => setIsDeleteDialogOpen(true)}
+                    >
+                      {isDeleting ? "Deleting..." : "Delete"}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
 
             <div className="mt-2 flex gap-2">
@@ -227,14 +236,6 @@ const CollectionPage = () => {
                 {collection.posts_count && collection.posts_count} posts •
                 Updated {formatDateToNow(collection.updated_at)}{" "}
               </p>
-
-              <UpdateWidget
-                onClick={handleUpdate}
-                isLoading={isUpdating}
-                collectionStatus={collection.status}
-                subreddits={collection.subreddits}
-                isUpadating={isBackgroundTaskUpdating}
-              />
             </div>
 
             {renameError && (
@@ -408,8 +409,7 @@ function UpdateWidget({
     return (
       <Button
         variant="outline"
-        size="sm"
-        className="mr-auto text-xs flex items-center gap-2 px-4"
+        className="mr-auto text-xs flex items-center gap-2 px-5"
         onClick={onClick}
         disabled={isLoading}
       >
