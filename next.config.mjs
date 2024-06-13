@@ -27,6 +27,11 @@ const nextConfig = {
     return config;
   },
 
+  images: {
+    domains: ["styles.redditmedia.com"],
+  },
+
   // ...other config
 };
+
 export default nextConfig;

@@ -11,6 +11,8 @@ import { Cross2Icon } from "@radix-ui/react-icons";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { IconCreditWhite } from "./icon";
 import actionCosts from "@/constants/actionCosts";
+import Image from "next/image";
+import Loader from "./ui/Loader";
 
 const CreateCollectionForm = () => {
   const [collectionName, setProjectName] = useState("");
@@ -25,23 +27,33 @@ const CreateCollectionForm = () => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
+    if (searchQuery.trim() === "") {
+      return;
+    }
+    setIsSearchLoading(true);
+    setSearchResults([]);
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/subreddits/search/${searchQuery}`
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_URL
+      }/api/subreddits/search/${searchQuery.trim()}`
     );
     const data = await response.json();
     setSearchResults(data);
+    setIsSearchLoading(false);
   };
 
   const router = useRouter();
 
   const handleAddSubreddit = (subreddit) => {
-    if (selectedSubreddits.length < 4) {
+    if (selectedSubreddits.length < 3) {
       setSelectedSubreddits([...selectedSubreddits, subreddit]);
     }
   };
 
-  const handleRemoveSubreddit = (index) => {
-    setSubreddits(subreddits.filter((_, i) => i !== index));
+  const handleRemoveSubreddit = (subredditId) => {
+    setSelectedSubreddits(
+      selectedSubreddits.filter((subreddit) => subreddit.id !== subredditId)
+    );
   };
 
   const handleCreateNewCollection = async () => {
@@ -51,16 +63,14 @@ const CreateCollectionForm = () => {
       setCreationError("Collection name is required");
       return;
     }
-    const validSubreddits = subreddits
-      .filter((subreddit) => subreddit.trim() !== "")
-      .map((filteredSubreddit) => filteredSubreddit.trim());
+    const validSubreddits = selectedSubreddits.map((subreddit) => subreddit.id);
 
     if (validSubreddits.length === 0) {
-      setCreationError("No subreddits provided");
+      setCreationError("At least 1 subreddit is required");
       return;
     }
     if (validSubreddits.length > 4) {
-      setCreationError("Cannot provide more than 4 subreddits per collection");
+      setCreationError("Cannot provide more than 3 subreddits per collection");
       return;
     }
     setIsCreating(true);
@@ -118,33 +128,91 @@ const CreateCollectionForm = () => {
       )}
       <div className="flex gap-4 items-start">
         <Card className="rounded-3xl flex flex-col overflow-hidden flex-1">
-          <div className="grid gap-5 p-8">
-            <div className="grid gap-1.5">
+          <div>
+            <div className="flex flex-col gap-1.5 p-6">
               <Label htmlFor="collectionName">Collection name</Label>
               <Input
                 id="collectionName"
                 value={collectionName}
                 onChange={(e) => setProjectName(e.target.value)}
+                className="rounded-full"
               />
             </div>
             <div className="flex flex-col gap-2 subreddits-container">
-              <div className="grid gap-1.5">
-                <Label>Subreddits</Label>
-                <form className="flex gap-2" onSubmit={handleSearch}>
-                  <Input
-                    placeholder="Search subreddits by name or description..."
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    value={searchQuery}
-                    className="rounded-full"
-                  />
-                  <Button type="submit">Search</Button>
-                </form>
-                <ul>
-                  {searchResults.map((subreddit, index) => (
-                    <li key={index}>
-                      {subreddit.name}
-                      <Button onClick={() => handleAddSubreddit(subreddit)}>
-                        Select
+              <div className="w-full">
+                <div className="flex flex-col gap-1.5 p-6 pt-0">
+                  <Label>Subreddits</Label>
+                  <form className="flex gap-2" onSubmit={handleSearch}>
+                    <Input
+                      placeholder="Search subreddits by name or description..."
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      value={searchQuery}
+                      className="rounded-full"
+                    />
+                    <Button type="submit" disabled={isSearchLoading}>
+                      Search
+                    </Button>
+                    {searchResults && searchResults.length > 0 && (
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setSearchResults([]);
+                          setSearchQuery("");
+                        }}
+                      >
+                        Clear
+                      </Button>
+                    )}
+                  </form>
+                </div>
+                <ul className="w-full p-6 flex flex-col gap-3">
+                  {isSearchLoading && (
+                    <div className="flex p-6 justify-center items-center">
+                      <Loader />
+                    </div>
+                  )}
+                  {searchResults.map((subreddit) => (
+                    <li
+                      key={subreddit.id}
+                      className={`border px-6 p-4 flex flex-col gap-2 items-start overflow-hidden rounded-2xl ${
+                        selectedSubreddits.find((s) => s.id === subreddit.id)
+                          ? "border-[#028178] "
+                          : null
+                      }`}
+                    >
+                      {/* <Image
+                        src={subreddit.community_icon}
+                        width={100}
+                        height={100}
+                      /> */}
+                      <h4 className="font-medium">
+                        {subreddit.url.slice(0, subreddit.url.length - 1)}
+                      </h4>
+                      {/* <p className="text-sm text-gray-700">{subreddit.title}</p> */}
+                      <p className="text-sm text-gray-700 whitespace-nowrap w-full overflow-hidden overflow-ellipsis">
+                        {subreddit.public_description}
+                      </p>
+                      <p className="text-sm font-medium text-gray-700">
+                        {subreddit.subscribers} members
+                      </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          if (
+                            selectedSubreddits.find(
+                              (s) => s.id === subreddit.id
+                            )
+                          ) {
+                            handleRemoveSubreddit(subreddit.id);
+                          } else {
+                            handleAddSubreddit(subreddit);
+                          }
+                        }}
+                      >
+                        {selectedSubreddits.find((s) => s.id === subreddit.id)
+                          ? "Remove"
+                          : "Select"}
                       </Button>
                     </li>
                   ))}
@@ -159,8 +227,17 @@ const CreateCollectionForm = () => {
               <Label className="p-6 pb-2 block">Selected subreddits</Label>
             )}
             {selectedSubreddits &&
-              selectedSubreddits.map((s) => (
-                <li className="border-b px-6 py-4">{s.name}</li>
+              selectedSubreddits.map((s, index) => (
+                <li className="border-b px-6 py-4 flex justify-between items-center">
+                  {s.name}
+                  <Button
+                    variant="outline"
+                    onClick={() => handleRemoveSubreddit(s.id)}
+                    className="w-10 p-3"
+                  >
+                    <Cross2Icon />
+                  </Button>
+                </li>
               ))}
           </ul>
           <div className="flex gap-2 p-6 border-b flex-col">
@@ -179,7 +256,7 @@ const CreateCollectionForm = () => {
               {!isCreating && (
                 <div className="flex items-center gap-0.5 text-xs text-white/70">
                   <div className="mt-[0.7px]">
-                    {subreddits.length * actionCosts.UPDATE_COLLECTION}
+                    {selectedSubreddits.length * actionCosts.UPDATE_COLLECTION}
                   </div>
                   <IconCreditWhite />
                 </div>
