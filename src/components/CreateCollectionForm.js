@@ -18,11 +18,25 @@ const CreateCollectionForm = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [creationError, setCreationError] = useState(null);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [selectedSubreddits, setSelectedSubreddits] = useState([]);
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/subreddits/search/${searchQuery}`
+    );
+    const data = await response.json();
+    setSearchResults(data);
+  };
+
   const router = useRouter();
 
-  const handleAddSubreddit = () => {
-    if (subreddits.length < 4) {
-      setSubreddits([...subreddits, ""]);
+  const handleAddSubreddit = (subreddit) => {
+    if (selectedSubreddits.length < 4) {
+      setSelectedSubreddits([...selectedSubreddits, subreddit]);
     }
   };
 
@@ -92,7 +106,7 @@ const CreateCollectionForm = () => {
   };
 
   return (
-    <div className="max-w-[560px] mx-auto">
+    <div className="max-w-[1280px] mx-auto">
       <h1 className="text-xl font-medium tracking-tight mb-4">
         Create new collection
       </h1>
@@ -102,81 +116,78 @@ const CreateCollectionForm = () => {
           <AlertDescription>{creationError}</AlertDescription>
         </Alert>
       )}
-      <Card className="rounded-3xl flex flex-col  overflow-hidden">
-        <div className="grid gap-5 p-8">
-          <div className="grid gap-1.5">
-            <Label htmlFor="collectionName">Collection name</Label>
-            <Input
-              id="collectionName"
-              value={collectionName}
-              onChange={(e) => setProjectName(e.target.value)}
-            />
-          </div>
-          <div className="flex flex-col gap-2 subreddits-container">
+      <div className="flex gap-4 items-start">
+        <Card className="rounded-3xl flex flex-col overflow-hidden flex-1">
+          <div className="grid gap-5 p-8">
             <div className="grid gap-1.5">
-              <Label>Subreddits</Label>
-              {subreddits.map((subreddit, index) => (
-                <div className="flex gap-2" key={index}>
-                  <Input
-                    key={index}
-                    id={`subreddit-${index}`}
-                    value={subreddit}
-                    onChange={(e) => {
-                      const newSubreddits = [...subreddits];
-                      newSubreddits[index] = e.target.value;
-                      setSubreddits(newSubreddits);
-                    }}
-                  />
-                  {subreddits.length > 1 && (
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="w-[40px] h-[40px] rounded-lg"
-                      onClick={() => handleRemoveSubreddit(index)}
-                    >
-                      <Cross2Icon className="" />
-                    </Button>
-                  )}
-                </div>
-              ))}
+              <Label htmlFor="collectionName">Collection name</Label>
+              <Input
+                id="collectionName"
+                value={collectionName}
+                onChange={(e) => setProjectName(e.target.value)}
+              />
             </div>
+            <div className="flex flex-col gap-2 subreddits-container">
+              <div className="grid gap-1.5">
+                <Label>Subreddits</Label>
+                <form className="flex gap-2" onSubmit={handleSearch}>
+                  <Input
+                    placeholder="Search subreddits by name or description..."
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    value={searchQuery}
+                    className="rounded-full"
+                  />
+                  <Button type="submit">Search</Button>
+                </form>
+                <ul>
+                  {searchResults.map((subreddit, index) => (
+                    <li key={index}>
+                      {subreddit.name}
+                      <Button onClick={() => handleAddSubreddit(subreddit)}>
+                        Select
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </Card>
+        <Card className="rounded-3xl flex flex-col overflow-hidden min-w-96">
+          <ul className="">
+            {selectedSubreddits && selectedSubreddits.length > 0 && (
+              <Label className="p-6 pb-2 block">Selected subreddits</Label>
+            )}
+            {selectedSubreddits &&
+              selectedSubreddits.map((s) => (
+                <li className="border-b px-6 py-4">{s.name}</li>
+              ))}
+          </ul>
+          <div className="flex gap-2 p-6 border-b flex-col">
+            {/* <Link href="/collections">
+              <Button type="button" variant="outline">
+                Cancel
+              </Button>
+            </Link> */}
 
             <Button
-              variant="outline"
-              size="sm"
-              className="mr-auto text-xs mt-2"
-              onClick={handleAddSubreddit}
-              disabled={subreddits.length > 3}
+              className="flex items-center gap-2"
+              onClick={handleCreateNewCollection}
+              disabled={isCreating}
             >
-              + Add another
+              {isCreating ? "Creating..." : `Create collection`}
+              {!isCreating && (
+                <div className="flex items-center gap-0.5 text-xs text-white/70">
+                  <div className="mt-[0.7px]">
+                    {subreddits.length * actionCosts.UPDATE_COLLECTION}
+                  </div>
+                  <IconCreditWhite />
+                </div>
+              )}
             </Button>
           </div>
-        </div>
-
-        <div className="flex gap-4 px-8 py-4 justify-end bg-gray-50 border-t">
-          <Link href="/collections">
-            <Button type="button" variant="outline">
-              Cancel
-            </Button>
-          </Link>
-
-          <Button
-            className="flex items-center gap-2"
-            onClick={handleCreateNewCollection}
-            disabled={isCreating}
-          >
-            {isCreating ? "Creating..." : `Create collection`}
-            {!isCreating && (
-              <div className="flex items-center gap-0.5 text-xs text-white/70">
-                <div className="mt-[0.7px]">
-                  {subreddits.length * actionCosts.UPDATE_COLLECTION}
-                </div>
-                <IconCreditWhite />
-              </div>
-            )}
-          </Button>
-        </div>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 };
