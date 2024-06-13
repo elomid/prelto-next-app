@@ -32,12 +32,11 @@ export default function CollectionsPage() {
     );
   }
 
-  if (isError)
-    return (
-      <Layout>
-        <div>Failed to load user.</div>
-      </Layout>
-    );
+  if (isError) {
+    console.error("Error in useRequireAuth", isError);
+    router.push("/auth/login");
+    return null;
+  }
 
   const showEmptyState =
     !isCollectionsLoading && collections && collections.length === 0;
