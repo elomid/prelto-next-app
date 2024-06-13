@@ -30,19 +30,6 @@ export default function SettingsPage() {
     router.push("/");
   }
 
-  async function initiatePayment() {
-    try {
-      const data = await fetchResponse({
-        method: "POST",
-        url: "/api/payment/initiate",
-      });
-
-      window.location.href = data.url;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   return (
     <Layout>
       <div className="flex mb-8 items-start">
@@ -57,7 +44,9 @@ export default function SettingsPage() {
             </Button>
           )}
           {user && user.subscriptionStatus === "not subscribed" && (
-            <Button onClick={initiatePayment}>Upgrade</Button>
+            <Link href="/choose-plan">
+              <Button>Upgrade</Button>
+            </Link>
           )}
         </div>
 
