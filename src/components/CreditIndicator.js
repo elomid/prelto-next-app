@@ -3,6 +3,7 @@ import useUser from "@/hooks/useUser";
 import { Button } from "./ui/button";
 import { fetchResponse } from "@/utils/fetchUtils";
 import { IconCreditGray } from "./icon";
+import Link from "next/link";
 
 function CreditIndicator() {
   const router = useRouter();
@@ -31,13 +32,11 @@ function CreditIndicator() {
       </div>
       {user && user.subscriptionStatus === "not subscribed" && (
         <div className="px-4 w-full">
-          <Button
-            onClick={initiatePayment}
-            size="sm"
-            className="text-xs w-full mb-4"
-          >
-            Upgrade
-          </Button>
+          <Link href="/choose-plan">
+            <Button size="sm" className="text-xs w-full mb-4">
+              Upgrade
+            </Button>
+          </Link>
         </div>
       )}
     </div>
