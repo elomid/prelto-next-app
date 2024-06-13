@@ -12,18 +12,18 @@ import Loader from "@/components/ui/Loader";
 
 function Answers({ collectionId }) {
   const [question, setQuestion] = useState(() => {
-    return localStorage.getItem("question") || "";
+    return localStorage.getItem(`question-${collectionId}`) || "";
   });
   const [messages, setMessages] = useState(() => {
-    return JSON.parse(localStorage.getItem("messages")) || [];
+    return JSON.parse(localStorage.getItem(`messages-${collectionId}`)) || [];
   });
   const [answer, setAnswer] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    localStorage.setItem("question", question);
-    localStorage.setItem("messages", JSON.stringify(messages));
+    localStorage.setItem(`question-${collectionId}`, question);
+    localStorage.setItem(`messages-${collectionId}`, JSON.stringify(messages));
   }, [question, messages]);
 
   const handleAskQuestion = async (e) => {
@@ -122,8 +122,8 @@ function Answers({ collectionId }) {
               onClick={() => {
                 setQuestion("");
                 setMessages([]);
-                localStorage.removeItem("question");
-                localStorage.removeItem("results");
+                localStorage.removeItem(`question-${collectionId}`);
+                localStorage.removeItem(`messages-${collectionId}`);
               }}
             >
               <Cross2Icon className="" />
