@@ -15,17 +15,17 @@ import Loader from "@/components/ui/Loader";
 
 function SemanticSearch({ collectionId }) {
   const [description, setDescription] = useState(() => {
-    return localStorage.getItem("description") || "";
+    return localStorage.getItem(`description-${collectionId}`) || "";
   });
   const [results, setResults] = useState(() => {
-    return JSON.parse(localStorage.getItem("results")) || [];
+    return JSON.parse(localStorage.getItem(`results-${collectionId}`)) || [];
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    localStorage.setItem("description", description);
-    localStorage.setItem("results", JSON.stringify(results));
+    localStorage.setItem(`description-${collectionId}`, description);
+    localStorage.setItem(`results-${collectionId}`, JSON.stringify(results));
   }, [description, results]);
 
   const handleSubmitSemanticSearch = async (e) => {
@@ -47,8 +47,8 @@ function SemanticSearch({ collectionId }) {
         isProtected: true,
         body: { query: trimmedDescription },
       });
-      localStorage.removeItem("description");
-      localStorage.removeItem("results");
+      localStorage.removeItem(`description-${collectionId}`);
+      localStorage.removeItem(`results-${collectionId}`);
       setResults(data);
     } catch (error) {
       console.error("Error:", error.message);
@@ -98,8 +98,8 @@ function SemanticSearch({ collectionId }) {
             onClick={() => {
               setDescription("");
               setResults([]);
-              localStorage.removeItem("description");
-              localStorage.removeItem("results");
+              localStorage.removeItem(`description-${collectionId}`);
+              localStorage.removeItem(`results-${collectionId}`);
             }}
           >
             <Cross2Icon className="" />

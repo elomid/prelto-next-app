@@ -15,6 +15,17 @@ function UserProfile() {
 
   function handleLogOut() {
     destroyCookie(null, "token");
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (
+        key.startsWith("question-") ||
+        key.startsWith("messages-") ||
+        key.startsWith("description-") ||
+        key.startsWith("results-")
+      ) {
+        localStorage.removeItem(key);
+      }
+    }
     router.push("/");
   }
 
