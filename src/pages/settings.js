@@ -7,6 +7,7 @@ import useUser from "@/hooks/useUser";
 import { Button } from "@/components/ui/button";
 import { fetchResponse } from "@/utils/fetchUtils";
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 export default function SettingsPage() {
   const { user, isLoading, isError } = useUser();
