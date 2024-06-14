@@ -258,13 +258,19 @@ const CreateCollectionForm = () => {
           </div>
         </Card>
         <Card className="rounded-3xl flex flex-col overflow-hidden min-w-96">
-          <ul className="">
-            {selectedSubreddits && selectedSubreddits.length > 0 && (
-              <Label className="p-6 pb-2 block">Selected subreddits</Label>
+          <ul className="p-6 flex flex-col gap-4 pb-0">
+            {selectedSubreddits && <Label className="">Selection</Label>}
+            {selectedSubreddits && selectedSubreddits.length === 0 && (
+              <div className="bg-gray-100 p-6 py-8 rounded-lg text-sm  justify-center text-center flex flex-col gap-1.5">
+                <Label>No subreddits selected</Label>
+                <p className="text-gray-700">
+                  Select upt to 3 subreddits to continue
+                </p>
+              </div>
             )}
             {selectedSubreddits &&
               selectedSubreddits.map((s, index) => (
-                <li className="border-b px-6 py-4 flex justify-between items-center">
+                <li className="border rounded-lg px-6 py-4 flex justify-between items-center">
                   {s.name}
                   <Button
                     variant="outline"
