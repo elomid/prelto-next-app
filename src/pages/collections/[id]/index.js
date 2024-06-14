@@ -57,6 +57,13 @@ const CollectionPage = () => {
   } = useSWR(id ? `/api/collections/${id}` : null, fetcher, {
     refreshInterval: revalidateInterval,
   });
+
+  useEffect(() => {
+    if (collection === undefined) {
+      router.push("/collections");
+    }
+  }, [collection]);
+
   const [isDeleting, setIsDeleting] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState(
     "Connecting to Reddit..."
@@ -75,6 +82,16 @@ const CollectionPage = () => {
     fetcher,
     { refreshInterval: revalidateInterval }
   );
+
+  if (collectionError) {
+    console.error("collectionError: ", collectionError);
+    router.push("/collections");
+    return;
+  }
+
+  if (postsError) {
+    console.error("postsError: ", postsError);
+  }
 
   useEffect(() => {
     if (collection) {
@@ -235,7 +252,9 @@ const CollectionPage = () => {
             <div className="flex flex-col gap-2 my-4">
               <p className="text-xs text-gray-700">
                 {collection.posts_count && collection.posts_count} posts •
-                Updated {formatDateToNow(collection.updated_at)}{" "}
+                {collection && collection.updated_at && (
+                  <span>Updated {formatDateToNow(collection?.updated_at)}</span>
+                )}
               </p>
             </div>
 
@@ -428,7 +447,7 @@ function UpdateWidget({
         disabled={isLoading}
       >
         {isLoading ? "Updating collection..." : `Get latest posts`}
-        {!isLoading && (
+        {!isLoading && subreddits && (
           <div className="flex items-center gap-0.5 text-xs text-black/50">
             <div className="mt-[0.8px]">
               {actionCosts.UPDATE_COLLECTION * subreddits.length}
