@@ -7,6 +7,7 @@ import PostsList from "@/components/PostsList";
 import Answers from "@/components/Answers";
 import SemanticSearch from "@/components/SemanticSearch";
 import PatternsList from "@/components/PatternsList";
+import Trends from "@/components/Trends";
 import CollectionLayout from "@/components/CollectionLayout";
 import Loader from "@/components/ui/Loader";
 import actionCosts from "@/constants/actionCosts";
@@ -306,6 +307,16 @@ const CollectionPage = () => {
                 >
                   Patterns
                 </Tabs.Trigger>
+                <Tabs.Trigger
+                  value="trends"
+                  className={`border-b-4  py-4 font-medium  transition-all ${
+                    tab === "trends"
+                      ? " border-black text-black"
+                      : "border-transparent text-gray-600"
+                  }`}
+                >
+                  Trends
+                </Tabs.Trigger>
               </Tabs.List>
               <Tabs.Content value="posts">
                 {posts ? (
@@ -322,6 +333,9 @@ const CollectionPage = () => {
               </Tabs.Content>
               <Tabs.Content value="semantic">
                 <SemanticSearch collectionId={id} />
+              </Tabs.Content>
+              <Tabs.Content value="trends">
+                <Trends collectionId={id} />
               </Tabs.Content>
             </Tabs.Root>
           )}
