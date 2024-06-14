@@ -67,11 +67,13 @@ const Trends = ({ collectionId }) => {
                   date: formatDate(d.date),
                 }))}
               >
+                <CartesianGrid stroke="#eee" />
+                <YAxis />
                 <XAxis dataKey="date" />
 
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#111",
+                    backgroundColor: "#000",
                     border: 0,
                     borderRadius: "10px",
                     color: "white",
