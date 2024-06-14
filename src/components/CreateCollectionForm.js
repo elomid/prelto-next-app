@@ -24,6 +24,7 @@ const CreateCollectionForm = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [selectedSubreddits, setSelectedSubreddits] = useState([]);
   const [isSearchLoading, setIsSearchLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -32,6 +33,7 @@ const CreateCollectionForm = () => {
     }
     setIsSearchLoading(true);
     setSearchResults([]);
+    setHasSearched(true);
     const response = await fetch(
       `${
         process.env.NEXT_PUBLIC_BACKEND_URL
@@ -117,9 +119,16 @@ const CreateCollectionForm = () => {
 
   return (
     <div className="max-w-[1280px] mx-auto">
-      <h1 className="text-xl font-medium tracking-tight mb-4">
-        Create new collection
-      </h1>
+      <div className="flex gap-2 items-center mb-4">
+        <Link href="/collections">
+          <Button variant="outline" size="sm" className="text-sm px-4">
+            Back
+          </Button>
+        </Link>
+        <h1 className="text-xl font-medium tracking-tight">
+          Create collection
+        </h1>
+      </div>
       {creationError && (
         <Alert variant="destructive" className="rounded-xl mb-4">
           <AlertTitle>Collection creation failed</AlertTitle>
@@ -144,10 +153,11 @@ const CreateCollectionForm = () => {
                   <Label>Subreddits</Label>
                   <form className="flex gap-2" onSubmit={handleSearch}>
                     <Input
-                      placeholder="Search subreddits by name or description..."
+                      placeholder="Search subreddits..."
                       onChange={(e) => setSearchQuery(e.target.value)}
                       value={searchQuery}
                       className="rounded-full"
+                      required
                     />
                     <Button type="submit" disabled={isSearchLoading}>
                       Search
@@ -158,6 +168,7 @@ const CreateCollectionForm = () => {
                         onClick={() => {
                           setSearchResults([]);
                           setSearchQuery("");
+                          setHasSearched(false);
                         }}
                       >
                         Clear
@@ -165,58 +176,83 @@ const CreateCollectionForm = () => {
                     )}
                   </form>
                 </div>
-                <ul className="w-full p-6 flex flex-col gap-3">
-                  {isSearchLoading && (
-                    <div className="flex p-6 justify-center items-center">
-                      <Loader />
-                    </div>
-                  )}
-                  {searchResults.map((subreddit) => (
-                    <li
-                      key={subreddit.id}
-                      className={`border px-6 p-4 flex flex-col gap-2 items-start overflow-hidden rounded-2xl ${
-                        selectedSubreddits.find((s) => s.id === subreddit.id)
-                          ? "border-[#028178] "
-                          : null
-                      }`}
-                    >
-                      {/* <Image
+                {(hasSearched || isSearchLoading) && (
+                  <ul className="w-full p-6 flex flex-col gap-3">
+                    {hasSearched &&
+                      searchResults.length === 0 &&
+                      !isSearchLoading && (
+                        <p className="text-sm text-center">No matches found</p>
+                      )}
+                    {isSearchLoading && (
+                      <div className="flex p-6 justify-center items-center">
+                        <Loader />
+                      </div>
+                    )}
+                    {searchResults.map((subreddit) => (
+                      <li
+                        key={subreddit.id}
+                        className={`border px-6 p-4 flex flex-col gap-2 items-start overflow-hidden rounded-2xl ${
+                          selectedSubreddits.find((s) => s.id === subreddit.id)
+                            ? "border-[#028178] "
+                            : null
+                        }`}
+                      >
+                        {/* <Image
                         src={subreddit.community_icon}
                         width={100}
                         height={100}
                       /> */}
-                      <h4 className="font-medium">
-                        {subreddit.url.slice(0, subreddit.url.length - 1)}
-                      </h4>
-                      {/* <p className="text-sm text-gray-700">{subreddit.title}</p> */}
-                      <p className="text-sm text-gray-700 whitespace-nowrap w-full overflow-hidden overflow-ellipsis">
-                        {subreddit.public_description}
-                      </p>
-                      <p className="text-sm font-medium text-gray-700">
-                        {subreddit.subscribers} members
-                      </p>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          if (
-                            selectedSubreddits.find(
+                        <h4 className="font-medium">
+                          {subreddit.url.slice(0, subreddit.url.length - 1)}
+                        </h4>
+                        {/* <p className="text-sm text-gray-700">{subreddit.title}</p> */}
+                        <p className="text-sm text-gray-700 whitespace-nowrap w-full overflow-hidden overflow-ellipsis">
+                          {subreddit.public_description}
+                        </p>
+                        <p className="text-sm font-medium text-gray-700">
+                          {subreddit.subscribers} members
+                        </p>
+                        <div className="flex gap-2 items-center ">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              if (
+                                selectedSubreddits.find(
+                                  (s) => s.id === subreddit.id
+                                )
+                              ) {
+                                handleRemoveSubreddit(subreddit.id);
+                              } else {
+                                handleAddSubreddit(subreddit);
+                              }
+                            }}
+                            disabled={
+                              selectedSubreddits.length >= 3 &&
+                              !selectedSubreddits.find(
+                                (s) => s.id === subreddit.id
+                              )
+                            }
+                          >
+                            {selectedSubreddits.find(
                               (s) => s.id === subreddit.id
                             )
-                          ) {
-                            handleRemoveSubreddit(subreddit.id);
-                          } else {
-                            handleAddSubreddit(subreddit);
-                          }
-                        }}
-                      >
-                        {selectedSubreddits.find((s) => s.id === subreddit.id)
-                          ? "Remove"
-                          : "Select"}
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
+                              ? "Remove"
+                              : "Select"}
+                          </Button>
+                          {selectedSubreddits.length >= 3 &&
+                            !selectedSubreddits.find(
+                              (s) => s.id === subreddit.id
+                            ) && (
+                              <div className="rounded-full bg-gray-100 text-xs text-gray-700 p-2 px-4">
+                                Can't select more than 3 subreddits
+                              </div>
+                            )}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
           </div>
