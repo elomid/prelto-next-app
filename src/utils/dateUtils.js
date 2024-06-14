@@ -1,6 +1,6 @@
 import { format, fromUnixTime, formatDistanceToNow } from "date-fns";
 
-const DEFAULT_DATE_FORMAT = "MMMM d, yyyy";
+const DEFAULT_DATE_FORMAT = "MMM d, yy";
 
 export const formatDate = (unixTimestamp, dateFormat = DEFAULT_DATE_FORMAT) => {
   const date = fromUnixTime(unixTimestamp / 1000);
