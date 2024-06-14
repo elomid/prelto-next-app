@@ -40,58 +40,36 @@ import {
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { fetchResponse } from "@/utils/fetchUtils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import useRequireAuth from "@/hooks/useRequireAuth";
 import { IconCreditGray } from "@/components/icon";
 import LoaderBig from "@/components/LoaderBig";
 import { Badge } from "@/components/ui/badge";
 
 const CollectionPage = () => {
-  const { user, isLoading, isError } = useRequireAuth();
   const router = useRouter();
   const { id, tab = "posts" } = router.query;
   const [revalidateInterval, setRevalidateInterval] = useState(0);
   const {
     data: collection,
+    isLoading: isCollectionLoading,
     error: collectionError,
     mutate: mutateCollection,
   } = useSWR(id ? `/api/collections/${id}` : null, fetcher, {
     refreshInterval: revalidateInterval,
   });
 
-  useEffect(() => {
-    if (collection === undefined) {
-      router.push("/collections");
-    }
-  }, [collection]);
-
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [loadingMessage, setLoadingMessage] = useState(
-    "Connecting to Reddit..."
-  );
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
-  // TODO: fix this, not working correctly
-  const [newCollectionName, setNewCollectionName] = useState(collection?.name);
-  const [isRenaming, setIsRenaming] = useState(false);
-  const [renameError, setRenameError] = useState(null);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [updateError, setUpdateError] = useState(null);
-
   const { data: posts, error: postsError } = useSWR(
     id ? `/api/collections/${id}/posts` : null,
     fetcher,
     { refreshInterval: revalidateInterval }
   );
-
-  if (collectionError) {
-    console.error("collectionError: ", collectionError);
-    router.push("/collections");
-    return;
-  }
-
-  if (postsError) {
-    console.error("postsError: ", postsError);
-  }
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
+  const [newCollectionName, setNewCollectionName] = useState("");
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [renameError, setRenameError] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [updateError, setUpdateError] = useState(null);
 
   useEffect(() => {
     if (collection) {
@@ -116,6 +94,24 @@ const CollectionPage = () => {
       }
     }
   }, [collection]);
+
+  if (isCollectionLoading) {
+    return (
+      <CollectionLayout>
+        <LoaderBig title="" />
+      </CollectionLayout>
+    );
+  }
+
+  if (collectionError) {
+    console.error("collectionError: ", collectionError);
+    router.push("/collections");
+    return;
+  }
+
+  if (postsError) {
+    console.error("postsError: ", postsError);
+  }
 
   const handleTabChange = (value) => {
     router.push(`/collections/${id}?tab=${value}`, undefined, {
@@ -253,7 +249,10 @@ const CollectionPage = () => {
               <p className="text-xs text-gray-700">
                 {collection.posts_count && collection.posts_count} posts •
                 {collection && collection.updated_at && (
-                  <span>Updated {formatDateToNow(collection?.updated_at)}</span>
+                  <span>
+                    {" "}
+                    Updated {formatDateToNow(collection?.updated_at)}
+                  </span>
                 )}
               </p>
             </div>
