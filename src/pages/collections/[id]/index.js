@@ -293,7 +293,7 @@ const CollectionPage = () => {
                   Posts
                 </Tabs.Trigger>
 
-                <Tabs.Trigger
+                {/* <Tabs.Trigger
                   value="semantic"
                   className={`border-b-4  py-4 font-medium  transition-all ${
                     tab === "semantic"
@@ -302,7 +302,7 @@ const CollectionPage = () => {
                   }`}
                 >
                   Semantic search
-                </Tabs.Trigger>
+                </Tabs.Trigger> */}
 
                 <Tabs.Trigger
                   value="answers"
@@ -349,9 +349,9 @@ const CollectionPage = () => {
               <Tabs.Content value="answers" className="answers-content">
                 <Answers collectionId={id} />
               </Tabs.Content>
-              <Tabs.Content value="semantic">
+              {/* <Tabs.Content value="semantic">
                 <SemanticSearch collectionId={id} />
-              </Tabs.Content>
+              </Tabs.Content> */}
               <Tabs.Content value="trends">
                 <Trends collectionId={id} />
               </Tabs.Content>
