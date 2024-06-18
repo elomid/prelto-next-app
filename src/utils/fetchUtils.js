@@ -27,5 +27,8 @@ export async function fetchResponse({
   }
 
   const data = await response.json();
+  console.log({ url });
+  console.log({ body });
+  console.log({ data });
   return data;
 }
