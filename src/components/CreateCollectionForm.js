@@ -50,6 +50,7 @@ const CreateCollectionForm = () => {
     } catch (error) {
       console.error("Error:", error);
       setSearchError("Something went wrong. Please try again.");
+      setIsSearchLoading(false);
     } finally {
       setIsSearchLoading(false);
     }
