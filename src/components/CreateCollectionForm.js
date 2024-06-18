@@ -11,6 +11,7 @@ import { Cross2Icon } from "@radix-ui/react-icons";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { IconCreditWhite } from "./icon";
 import actionCosts from "@/constants/actionCosts";
+import { fetchResponse } from "@/utils/fetchUtils";
 import Image from "next/image";
 import Loader from "./ui/Loader";
 
@@ -25,23 +26,33 @@ const CreateCollectionForm = () => {
   const [selectedSubreddits, setSelectedSubreddits] = useState([]);
   const [isSearchLoading, setIsSearchLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [searchError, setSearchError] = useState(null);
 
   const handleSearch = async (e) => {
     e.preventDefault();
+    setSearchError(null);
     if (searchQuery.trim() === "") {
       return;
     }
     setIsSearchLoading(true);
     setSearchResults([]);
     setHasSearched(true);
-    const response = await fetch(
-      `${
-        process.env.NEXT_PUBLIC_BACKEND_URL
-      }/api/subreddits/search/${searchQuery.trim()}`
-    );
-    const data = await response.json();
-    setSearchResults(data);
-    setIsSearchLoading(false);
+
+    try {
+      const data = await fetchResponse({
+        method: "POST",
+        url: `/api/subreddits/search`,
+        isProtected: true,
+        body: { query: searchQuery.trim() },
+      });
+
+      setSearchResults(data);
+    } catch (error) {
+      console.error("Error:", error);
+      setSearchError("Something went wrong. Please try again.");
+    } finally {
+      setIsSearchLoading(false);
+    }
   };
 
   const router = useRouter();
@@ -176,7 +187,12 @@ const CreateCollectionForm = () => {
                     )}
                   </form>
                 </div>
-                {(hasSearched || isSearchLoading) && (
+                {searchError && (
+                  <div className="mx-6 mb-6 px-4 py-3 bg-red-50 rounded-lg text-sm text-red-600">
+                    {searchError}
+                  </div>
+                )}
+                {(hasSearched || isSearchLoading) && !searchError && (
                   <ul className="w-full p-6 flex flex-col gap-3">
                     {hasSearched &&
                       searchResults.length === 0 &&
