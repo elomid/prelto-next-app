@@ -42,7 +42,7 @@ const CreateCollectionForm = () => {
       const data = await fetchResponse({
         method: "POST",
         url: `/api/subreddits/search`,
-        isProtected: true,
+        isProtected: false,
         body: { query: searchQuery.trim() },
       });
 
